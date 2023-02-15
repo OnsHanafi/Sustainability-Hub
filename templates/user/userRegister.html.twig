@@ -16,12 +16,12 @@
 						</h3>
 						<p>
 							Create your  account now and get immediate access to workshops
-																																																																																											Blogs and Events
+																																																																																																																																																																																																																																Blogs and Events
 
 						</p>
 						{# <a href="">
-																																																																																											REGISTER NOW
-																																																																																										</a> #}
+																																																																																																																																																																																																													REGISTER NOW
+																																																																																																																																																																																																												</a> #}
 					</div>
 				</div>
 				<div class="col-md-6">
@@ -29,7 +29,8 @@
 						<h5>
 							Register Now
 						</h5>
-						<form action="{{ path('create_user') }}" method='post'>
+						{{ form_start(userForm ) }}
+						<form action="{{ path('create_user') }}">
 
 							<div>
 								{{ form_widget(userForm.nom,  {'attr': {'placeholder': 'nom'}}) }}
@@ -46,7 +47,7 @@
 							<div>
 								{{ form_widget(userForm.genre, {'attr': {'class': 'form-control'}}) }}
 							</div>
-							<button type="submit">{{ button_label|default('Register') }}</button>
+							{{ form_end(userForm ) }}
 
 						</form>
 					</div>

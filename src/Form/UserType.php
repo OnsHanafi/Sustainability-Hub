@@ -8,6 +8,7 @@ use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class UserType extends AbstractType
 {
@@ -23,7 +24,8 @@ class UserType extends AbstractType
                     'User' => 'user',
                     'Formateur' => 'formateur',
                 ]
-            ]);
+            ])
+            ->add('Register', SubmitType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

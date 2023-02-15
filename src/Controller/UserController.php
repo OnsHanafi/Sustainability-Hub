@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
-    #[Route('/user', name: 'app_home')]
+    #[Route('/ ', name: 'app_home')]
     public function home(): Response
     {
         return $this->render('baseFront.html.twig', []);
@@ -33,7 +33,7 @@ class UserController extends AbstractController
     #[Route('/users', name: 'event_list')]
     public function ListEvents(UserRepository $repository)
     {
-        $users = $repository->findAll();
+        $users = $repository(User::class)->findAll();
         return $this->render('baseFront.html.twig', ['users' => $users]);
         // return $this->json(["users" => $users]);
     }
@@ -60,7 +60,7 @@ class UserController extends AbstractController
     // }
 
     #[Route('/create_user', name: 'create_user')]
-    public function createUser(Request $request, UserRepository $userRepository, ManagerRegistry $doctrine): Response
+    public function createUser(Request $request, UserRepository $userRepository, ManagerRegistry $doctrine)
     { {
             $user = new User();
             $form = $this->createForm(UserType::class, $user);
@@ -71,10 +71,10 @@ class UserController extends AbstractController
                 $entityManager->persist($user);
                 $entityManager->flush();
                 // return $this->json(['message' => ' creating user', $user]);
-                return $this->redirectToRoute('login_user');
+                return $this->redirectToRoute('app_home');
             }
             return $this->renderForm('user/userRegister.html.twig', [
-                // 'user' => $user,
+
                 'userForm' => $form,
             ]);
         }
@@ -140,5 +140,37 @@ class UserController extends AbstractController
         $entityManager->flush();
 
         return $this->json(['message' => 'User deleted successfully']);
+    }
+
+
+    #[Route('/userCreate', name: 'Create_user')]
+    public function create(Request $request): Response
+    {
+
+
+
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $user = new User();
+
+
+        $form = $this->createForm(UserType::class, $user);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $entityManager->persist($user);
+
+
+            $entityManager->flush();
+            return $this->redirectToRoute('app_user');
+        } else {
+            return $this->render(
+                "user/userRegister.html.twig",
+                [
+                    'userForm' => $form->createView()
+                ]
+            );
+        }
     }
 }
