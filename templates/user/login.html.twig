@@ -1,0 +1,63 @@
+{% extends 'baseFront.html.twig' %}
+
+{% block title %}Login
+{% endblock %}
+
+{% block body %}
+	<!-- login section -->
+
+	<section class="login_section layout_padding">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="detail-box">
+						<h3>
+							Sustainability Hub
+						</h3>
+						<p>
+							Create your  account now and get immediate access to workshops
+
+						</p>
+						<a href="create_user">REGISTER NOW</a>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="login_form">
+						<h5>
+							Login
+						</h5>
+						{{ form_start(loginForm) }}
+						<form action="{{ path('app_login') }}">
+							<div>
+								{{ form_widget(loginForm.email, {'attr': {'placeholder': 'Email'}}) }}
+							</div>
+							<div>
+								{{ form_widget(loginForm.mot_de_passe, {'attr': {'placeholder': 'Password'}}) }}
+							</div>
+							{{ form_end(loginForm) }}
+
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	{# <h1>
+			Login
+			</h1> #}
+{# 
+		{% if app.session.flashbag.peek('error') is defined %}
+			<div class="alert alert-danger"> {{ app.session.flashbag.get('error') }}</div>
+	{% endif %} #}
+
+	{# {{ form_start(loginForm) }}
+		
+			{{ form_label(loginForm.email) }}
+			{{ form_widget(loginForm.email) }}
+		
+			{{ form_label(loginForm.mot_de_passe) }}
+			{{ form_widget(loginForm.mot_de_passe) }}<button type="submit">
+				Login</button>
+		
+			{{ form_end(loginForm) }} #}
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'baseBack.html.twig' %}
+
+{% block body %}
+	<div class="col-lg-4 mx-auto">
+		<h2 class="text-center mb-4">Profile</h2>
+		<div class="auto-form-wrapper">
+
+			<div class="form-group">
+				<div class="input-group">
+					<label class="form-control">Nom :{{user.nom}}</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="input-group">
+					<label class="form-control">prenom :{{user.prenom}}</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="input-group">
+					<label class="form-control">Email :{{user.email}}</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="input-group">
+					<label class="form-control">genre :{{user.genre}}</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-primary submit-btn btn-block">Update Profile</button>
+			</div>
+
+
+		</div>
+	</div>
+{% endblock %}
