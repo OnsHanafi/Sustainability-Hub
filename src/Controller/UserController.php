@@ -3,9 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\LoginType;
+use App\Form\UserType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,6 +16,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
+    #[Route('/user', name: 'app_home')]
+    public function home(): Response
+    {
+        return $this->render('baseFront.html.twig', []);
+    }
+
     #[Route('/user', name: 'app_user')]
     public function index(): Response
     {
@@ -22,51 +31,95 @@ class UserController extends AbstractController
     }
 
     #[Route('/users', name: 'event_list')]
-    public function ListEvents(UserRepository $repository): Response
+    public function ListEvents(UserRepository $repository)
     {
         $users = $repository->findAll();
-        return $this->render('user/list.html.twig', ['users' => $users]);
+        return $this->render('baseFront.html.twig', ['users' => $users]);
+        // return $this->json(["users" => $users]);
     }
 
     //add user 
-    #[Route('/create_user', name: 'app_user', methods: "POST")]
-    public function createUser(Request $request, EntityManager $entityManager)
-    {
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user);
-        $data = json_decode($request->getContent(), true);
-        $form->submit($data);
+    // #[Route('/create_user', name: 'create_user')]
+    // public function createUser(Request $request, ManagerRegistry $doctrine): Response
+    // {
+    //     $user = new User();
+    //     $form = $this->createForm(UserType::class, $user);
+    //     $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($user);
-            $entityManager->flush();
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         $entityManager = $doctrine->getManager();
+    //         $entityManager->persist($user);
+    //         $entityManager->flush();
+    //         return $this->json(['message' => $user]);
+    //         // return $this->redirectToRoute('event_list');
+    //     }
+    //     // return $this->render('event/add.html.twig', [
+    //     //     'form' => $form->createView(),
+    //     // ]);
+    //     return $this->json(['erro' => $form->getErrors()]);
+    // }
 
-            return $this->json(['message' => 'User created successfully']);
+    #[Route('/create_user', name: 'create_user')]
+    public function createUser(Request $request, UserRepository $userRepository, ManagerRegistry $doctrine): Response
+    { {
+            $user = new User();
+            $form = $this->createForm(UserType::class, $user);
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $entityManager = $doctrine->getManager();
+                $entityManager->persist($user);
+                $entityManager->flush();
+                // return $this->json(['message' => ' creating user', $user]);
+                return $this->redirectToRoute('login_user');
+            }
+            return $this->renderForm('user/userRegister.html.twig', [
+                // 'user' => $user,
+                'userForm' => $form,
+            ]);
         }
-
-        return $this->json(['error' => $form->getErrors()], 400);
-        // return $this->render('event/add.html.twig',[
-        //     'form'=> $form->createView(),
-        // ]);
     }
+
+
 
     // update user 
     #[Route('/update_user/{id}', name: 'update_user', methods: "PUT")]
-    public function updateUser(User $user, Request $request, EntityManagerInterface $entityManager)
+    public function updateUser(int $id, Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager)
     {
-        $form = $this->createForm(UserType::class, $user);
-        $data = json_decode($request->getContent(), true);
-        $form->submit($data);
+        $user = $userRepository->findUserById($id);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            return $this->json(['message' => 'User updated successfully']);
+        if (!$user) {
+            return $this->json(['error' => 'User not found'], 404);
         }
 
-        return $this->json(['error' => $form->getErrors()], 400);
+        $data = json_decode($request->getContent(), true);
+        $user->setNom($data['nom']);
+        $user->setPrenom($data['prenom']);
+        $user->setEmail($data['email']);
+        $user->setMotDePasse($data['mot_de_passe']);
+        $user->setGenre($data['genre']);
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return $this->json(['message' => 'User updated successfully', $user]);
     }
+    // ALTERNATIVE 
+    // public function updateUser(User $user, Request $request, EntityManagerInterface $entityManager)
+    // {
+    //     $form = $this->createForm(UserType::class, $user);
+    //     $data = json_decode($request->getContent(), true);
+    //     $form->submit($data);
+
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         $entityManager->persist($user);
+    //         $entityManager->flush();
+
+    //         return $this->json(['message' => 'User updated successfully']);
+    //     }
+
+    //     return $this->json(['error' => $form->getErrors()], 400);
+    // }
 
     // show a user 
     #[Route('/user/{id}', name: 'show_user', methods: "GET")]
@@ -74,6 +127,10 @@ class UserController extends AbstractController
     {
         return $this->json($user);
     }
+
+
+
+
 
     //Delete user 
     #[Route('/delete_user/{id}', name: 'delete_user', methods: "DELETE")]
