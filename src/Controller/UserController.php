@@ -9,11 +9,13 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+
 
 class UserController extends AbstractController
 {
@@ -70,7 +72,7 @@ class UserController extends AbstractController
 
     //login
     #[Route('/login', name: 'app_login')]
-    public function login(Request $request, UserRepository $userRepository,  SessionInterface $session)
+    public function login(Request $request, UserRepository $userRepository,  SessionInterface $session): Response
     {
         $form = $this->createForm(LoginType::class);
         $form->handleRequest($request);
@@ -78,28 +80,24 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
             $existingUser = $userRepository->findOneBy(['email' => $user->getEmail()]);
-
             if (!$existingUser) {
                 // throw new BadCredentialsException('Invalid email or password');
             }
+            // if password doesn't match : throw new BadCredentialsException('Invalid email or password');
 
-            if (!password_verify($user->getMotDePasse(), $existingUser->getMotDePasse())) {
-                // throw new BadCredentialsException('Invalid email or password');
-            }
+            if ($user->getMotDePasse() == $existingUser->getMotDePasse()) {
 
-            // Set user attributes in session
-            $session->set('user', [
-                'idUser' => $existingUser->getIdUser(),
-                'nom' => $existingUser->getNom(),
-                'prenom' => $existingUser->getPrenom(),
-                'email' => $existingUser->getEmail(),
-                'mot_de_passe' => $existingUser->getMotDePasse(),
-                'genre' => $existingUser->getGenre(),
-            ]);
-            if ($existingUser->getGenre() === "admin") {
-                return $this->redirectToRoute('app_home_admin');
-            } else {
-                return $this->redirectToRoute('app_home_user');
+
+                // Set user attributes in session
+                $session->set('user', [
+                    'idUser' => $existingUser->getIdUser(),
+                    'nom' => $existingUser->getNom(),
+                    'prenom' => $existingUser->getPrenom(),
+                    'email' => $existingUser->getEmail(),
+                    'mot_de_passe' => $existingUser->getMotDePasse(),
+                    'genre' => $existingUser->getGenre(),
+                ]);
+                return $this->redirectToRoute('show_user', ['idUser' => $existingUser->getIdUser()]);
             }
         }
 
@@ -107,6 +105,31 @@ class UserController extends AbstractController
             'loginForm' => $form->createView(),
         ]);
     }
+
+    //Profile
+    #[Route('/user/{idUser}', name: 'show_user')]
+    public function showUser(SessionInterface $session, UserRepository $userRepository)
+    {
+        $userId = $session->get('user')['idUser'];
+        $user = $userRepository->find($userId);
+
+        if (!$user) {
+            throw $this->createNotFoundException('User not found');
+        }
+
+        if ($user->getGenre() === 'admin') {
+            return $this->render('user/profile/adminProfile.html.twig', [
+                'user' => $user,
+            ]);
+        } else {
+            return $this->render('user/profile/userProfile.html.twig', [
+                'user' => $user,
+            ]);
+        }
+    }
+
+
+
 
     // update user 
     #[Route('/update_user/{id}', name: 'update_user', methods: "PUT")]
@@ -147,12 +170,7 @@ class UserController extends AbstractController
     //     return $this->json(['error' => $form->getErrors()], 400);
     // }
 
-    // show a user 
-    #[Route('/user/{id}', name: 'show_user')]
-    public function showUser(User $user)
-    {
-        return $this->json($user);
-    }
+
 
 
 
