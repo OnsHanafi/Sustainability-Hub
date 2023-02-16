@@ -12,6 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
@@ -68,30 +69,40 @@ class UserController extends AbstractController
     }
 
     //login
-    #[Route('/login', name: 'login_user')]
-    public function login(Request $request, UserRepository $userRepository): Response
+    #[Route('/login', name: 'app_login')]
+    public function login(Request $request, UserRepository $userRepository,  SessionInterface $session)
     {
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(LoginType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $email = $form->get('email')->getData();
-            $password = $form->get('mot_de_passe')->getData();
+            $user = $form->getData();
+            $existingUser = $userRepository->findOneBy(['email' => $user->getEmail()]);
 
-            $user = $userRepository->findOneBy(['email' => $email]);
-            return $this->json('ok!!');
-            if (!$user) {
-                return $this->json('User with this email does not exist');
+            if (!$existingUser) {
+                // throw new BadCredentialsException('Invalid email or password');
             }
 
-            if (!password_verify($password, $user->getMotDePasse())) {
-                return $this->json('Invalid password');
+            if (!password_verify($user->getMotDePasse(), $existingUser->getMotDePasse())) {
+                // throw new BadCredentialsException('Invalid email or password');
             }
 
-    
+            // Set user attributes in session
+            $session->set('user', [
+                'idUser' => $existingUser->getIdUser(),
+                'nom' => $existingUser->getNom(),
+                'prenom' => $existingUser->getPrenom(),
+                'email' => $existingUser->getEmail(),
+                'mot_de_passe' => $existingUser->getMotDePasse(),
+                'genre' => $existingUser->getGenre(),
+            ]);
+
+            return $this->redirectToRoute('app_home_user');
         }
 
+        return $this->render('user/login.html.twig', [
+            'loginForm' => $form->createView(),
+        ]);
     }
 
     // update user 
