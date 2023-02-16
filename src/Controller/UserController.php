@@ -96,8 +96,11 @@ class UserController extends AbstractController
                 'mot_de_passe' => $existingUser->getMotDePasse(),
                 'genre' => $existingUser->getGenre(),
             ]);
-
-            return $this->redirectToRoute('app_home_user');
+            if ($existingUser->getGenre() === "admin") {
+                return $this->redirectToRoute('app_home_admin');
+            } else {
+                return $this->redirectToRoute('app_home_user');
+            }
         }
 
         return $this->render('user/login.html.twig', [
@@ -145,7 +148,7 @@ class UserController extends AbstractController
     // }
 
     // show a user 
-    #[Route('/user/{id}', name: 'show_user', methods: "GET")]
+    #[Route('/user/{id}', name: 'show_user')]
     public function showUser(User $user)
     {
         return $this->json($user);
