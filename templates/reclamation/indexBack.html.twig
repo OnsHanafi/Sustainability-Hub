@@ -1,0 +1,38 @@
+{% extends 'base2.html.twig' %}
+
+{% block title %}Reclamation {% endblock %}
+{% block body %}
+    <h1>Reclamation </h1>
+
+    <table class="table">
+  
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Contenu</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Prenom</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+        {% for Reclamation in rec %}
+            <tr>
+                <td>{{ Reclamation.id }}</td>
+                <td>{{ Reclamation.contenu }}</td>
+                <td>{{ Reclamation.nom }}</td>
+                <td>{{ Reclamation.email }}</td>
+                <td>{{ Reclamation.prenom }}</td>
+                <td>
+                    <a href="{{ path('delete1', {'id': Reclamation.id}) }}">Supprimer</a>
+                   
+                </td>
+            </tr>
+      
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_reclamation1') }}">Create</a>
+{% endblock %}
