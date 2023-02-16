@@ -46,26 +46,6 @@ class UserController extends AbstractController
     }
 
     //add user 
-    // #[Route('/create_user', name: 'create_user')]
-    // public function createUser(Request $request, ManagerRegistry $doctrine): Response
-    // {
-    //     $user = new User();
-    //     $form = $this->createForm(UserType::class, $user);
-    //     $form->handleRequest($request);
-
-    //     if ($form->isSubmitted() && $form->isValid()) {
-    //         $entityManager = $doctrine->getManager();
-    //         $entityManager->persist($user);
-    //         $entityManager->flush();
-    //         return $this->json(['message' => $user]);
-    //         // return $this->redirectToRoute('event_list');
-    //     }
-    //     // return $this->render('event/add.html.twig', [
-    //     //     'form' => $form->createView(),
-    //     // ]);
-    //     return $this->json(['erro' => $form->getErrors()]);
-    // }
-
     #[Route('/create_user', name: 'create_user')]
     public function createUser(Request $request, UserRepository $userRepository, ManagerRegistry $doctrine)
     { {
@@ -86,6 +66,31 @@ class UserController extends AbstractController
             ]);
         }
     }
+
+    //login
+    #[Route('/login', name: 'login_user')]
+    public function login(Request $request, UserRepository $userRepository): Response
+    {
+        $user = new User();
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $email = $form->get('email')->getData();
+            $password = $form->get('mot_de_passe')->getData();
+
+            $user = $userRepository->findOneBy(['email' => $email]);
+            return $this->json('ok!!');
+            if (!$user) {
+                return $this->json('User with this email does not exist');
+            }
+
+            if (!password_verify($password, $user->getMotDePasse())) {
+                return $this->json('Invalid password');
+            }
+
+    
+        }
 
 
 
