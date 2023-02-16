@@ -16,11 +16,18 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
-    #[Route('/ ', name: 'app_home')]
-    public function home(): Response
+    #[Route('/homeUser ', name: 'app_home_user')]
+    public function homeUser(): Response
     {
         return $this->render('baseFront.html.twig', []);
     }
+
+    #[Route('/homeAdmin ', name: 'app_home_admin')]
+    public function homeAdmin(): Response
+    {
+        return $this->render('baseBack.html.twig', []);
+    }
+
 
     #[Route('/user', name: 'app_user')]
     public function index(): Response
