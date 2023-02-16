@@ -24,7 +24,7 @@ class User
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $mot_de_passe = null;
+    private ?string $motDePasse = null;
 
     #[ORM\Column(length: 255)]
     private ?string $genre = null;
@@ -84,12 +84,12 @@ class User
 
     public function getMotDePasse(): ?string
     {
-        return $this->mot_de_passe;
+        return $this->motDePasse;
     }
 
-    public function setMotDePasse(string $mot_de_passe): self
+    public function setMotDePasse(string $motDePasse): self
     {
-        $this->mot_de_passe = $mot_de_passe;
+        $this->motDePasse = $motDePasse;
 
         return $this;
     }

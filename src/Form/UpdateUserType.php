@@ -3,14 +3,14 @@
 namespace App\Form;
 
 use App\Entity\User;
+use Doctrine\Common\Annotations\Annotation\Required;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\ChoiceList\ChoiceList;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\SubmitButton;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UserType extends AbstractType
+class UpdateUserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -18,14 +18,7 @@ class UserType extends AbstractType
             ->add('nom')
             ->add('prenom')
             ->add('email')
-            ->add('motDePasse')
-            ->add('genre', ChoiceType::class, [
-                'choices' => [
-                    'User' => 'user',
-                    'Formateur' => 'formateur',
-                ]
-            ])
-            ->add('Register', SubmitType::class);
+            ->add('motDePasse');
     }
 
     public function configureOptions(OptionsResolver $resolver): void

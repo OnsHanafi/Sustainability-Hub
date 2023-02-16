@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\LoginType;
+use App\Form\UpdateUserType;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManager;
@@ -61,7 +62,7 @@ class UserController extends AbstractController
                 $entityManager->persist($user);
                 $entityManager->flush();
                 // return $this->json(['message' => ' creating user', $user]);
-                return $this->redirectToRoute('app_home');
+                return $this->redirectToRoute('app_login');
             }
             return $this->renderForm('user/userRegister.html.twig', [
 
@@ -94,7 +95,7 @@ class UserController extends AbstractController
                     'nom' => $existingUser->getNom(),
                     'prenom' => $existingUser->getPrenom(),
                     'email' => $existingUser->getEmail(),
-                    'mot_de_passe' => $existingUser->getMotDePasse(),
+                    'motDePasse' => $existingUser->getMotDePasse(),
                     'genre' => $existingUser->getGenre(),
                 ]);
                 return $this->redirectToRoute('show_user', ['idUser' => $existingUser->getIdUser()]);
@@ -132,89 +133,116 @@ class UserController extends AbstractController
 
 
     // update user 
-    #[Route('/update_user/{id}', name: 'update_user', methods: "PUT")]
-    public function updateUser(int $id, Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager)
+    #[Route('/update_user/{id}', name: 'update_user')]
+    public function updateUser(Request $request, EntityManagerInterface $entityManager, SessionInterface $session, UserRepository $userRepository)
     {
-        $user = $userRepository->findUserById($id);
+        // get the user's data from the session
+        $userId = $session->get('user')['idUser'];
+        $user = $userRepository->findUserById($userId);
+        // create a form to update the user's information
+        $form = $this->createForm(UpdateUserType::class);
 
-        if (!$user) {
-            return $this->json(['error' => 'User not found'], 404);
+        // handle the form submission
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // retrieve the updated user data from the form
+            $updatedUser = $form->getData();
+
+            // update the user entity with the new data
+            $user->setNom($updatedUser->getNom());
+            $user->setPrenom($updatedUser->getPrenom());
+            $user->setEmail($updatedUser->getEmail());
+            $user->setMotDePasse($updatedUser->getMotDePasse());
+            // update the user in the database
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'User updated successfully.');
+
+            return $this->redirectToRoute('show_user', ['idUser' => $user->getIdUser()]);
         }
 
-        $data = json_decode($request->getContent(), true);
-        $user->setNom($data['nom']);
-        $user->setPrenom($data['prenom']);
-        $user->setEmail($data['email']);
-        $user->setMotDePasse($data['mot_de_passe']);
-        $user->setGenre($data['genre']);
-
-        $entityManager->persist($user);
-        $entityManager->flush();
-
-        return $this->json(['message' => 'User updated successfully', $user]);
+        if ($user->getGenre() === 'admin') {
+            return $this->renderForm('user/update/adminUpdate.html.twig', [
+                'form' => $form,
+                'user' => $user,
+            ]);
+        } else {
+            return $this->renderForm('user/update/userUpdate.html.twig', [
+                'form' => $form,
+                'user' => $user,
+            ]);
+        }
     }
-    // ALTERNATIVE 
-    // public function updateUser(User $user, Request $request, EntityManagerInterface $entityManager)
+
+
+    // public function updateUser(int $id, Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager)
     // {
-    //     $form = $this->createForm(UserType::class, $user);
-    //     $data = json_decode($request->getContent(), true);
-    //     $form->submit($data);
+    // $user = $userRepository->findUserById($id);
 
-    //     if ($form->isSubmitted() && $form->isValid()) {
-    //         $entityManager->persist($user);
-    //         $entityManager->flush();
-
-    //         return $this->json(['message' => 'User updated successfully']);
-    //     }
-
-    //     return $this->json(['error' => $form->getErrors()], 400);
+    // if (!$user) {
+    //     return $this->json(['error' => 'User not found'], 404);
     // }
 
+    // $data = json_decode($request->getContent(), true);
+    // $user->setNom($data['nom']);
+    // $user->setPrenom($data['prenom']);
+    // $user->setEmail($data['email']);
+    // $user->setMotDePasse($data['motDePasse']);
+    // $user->setGenre($data['genre']);
 
+    // $entityManager->persist($user);
+    // $entityManager->flush();
 
-
-
+    // return $this->json(['message' => 'User updated successfully', $user]);
+    // }
+    // ALTERNATIVE 
 
 
     //Delete user 
-    #[Route('/delete_user/{id}', name: 'delete_user', methods: "DELETE")]
-    public function deleteUser(User $user, EntityManagerInterface $entityManager)
+    #[Route('/delete_user/{id}', name: 'delete_user')]
+    public function deleteUser(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository, $id)
     {
+        // find the user to delete
+        $user = $userRepository->find($id);
+
+        //delete from DB
         $entityManager->remove($user);
         $entityManager->flush();
 
-        return $this->json(['message' => 'User deleted successfully']);
+        return $this->redirectToRoute('create_user');
     }
 
 
-    #[Route('/userCreate', name: 'Create_user')]
-    public function create(Request $request): Response
-    {
+    // #[Route('/userCreate', name: 'Create_user')]
+    // public function create(Request $request): Response
+    // {
 
 
 
-        $entityManager = $this->getDoctrine()->getManager();
+    //     $entityManager = $this->getDoctrine()->getManager();
 
-        $user = new User();
-
-
-        $form = $this->createForm(UserType::class, $user);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $entityManager->persist($user);
+    //     $user = new User();
 
 
-            $entityManager->flush();
-            return $this->redirectToRoute('app_user');
-        } else {
-            return $this->render(
-                "user/userRegister.html.twig",
-                [
-                    'userForm' => $form->createView()
-                ]
-            );
-        }
-    }
+    //     $form = $this->createForm(UserType::class, $user);
+
+    //     $form->handleRequest($request);
+    //     if ($form->isSubmitted() && $form->isValid()) {
+
+    //         $entityManager->persist($user);
+
+
+    //         $entityManager->flush();
+    //         return $this->redirectToRoute('app_user');
+    //     } else {
+    //         return $this->render(
+    //             "user/userRegister.html.twig",
+    //             [
+    //                 'userForm' => $form->createView()
+    //             ]
+    //         );
+    //     }
+    // }
 }

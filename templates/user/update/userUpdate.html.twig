@@ -1,0 +1,45 @@
+{% extends 'baseFront.html.twig' %}
+
+{% block body %}
+	<section class="contact_section">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="detail-box">
+						<div class="heading_container">
+							<h3>
+								Update Profile
+							</h3>
+
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="contact-form">
+						<h5>
+							modifier vos données
+						</h5>
+						{{ form_start(form) }}
+						<div>
+							{{ form_widget(form.nom, {'attr': {'placeholder': user.nom}}) }}
+						</div>
+						<div>
+							{{ form_widget(form.prenom, {'attr': {'placeholder': user.prenom}}) }}
+						</div>
+						<div>
+							{{ form_widget(form.email, {'attr': {'placeholder': user.email}}) }}
+						</div>
+						<div>
+							{{ form_widget(form.motDePasse, {'attr': {'placeholder': user.motDePasse}}) }}
+						</div>
+						<div class="d-flex justify-content-center">
+							<button type="submit" class="btn btn-primary">Update Profile</button>
+						</div>
+						{{ form_end(form) }}
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+{% endblock %}
