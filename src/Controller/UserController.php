@@ -92,7 +92,7 @@ class UserController extends AbstractController
     
         }
 
-
+    }
 
     // update user 
     #[Route('/update_user/{id}', name: 'update_user', methods: "PUT")]
