@@ -1,1 +1,37 @@
-admin hello 
+{% extends "baseBack.html.twig" %}
+
+{% block body %}
+
+	<div class="col-12">
+		<div class="card">
+			<div class="card-body">
+				<h4 class="card-title">update</h4>
+				<p class="card-description">
+					Modifier vos données
+				</p>
+				{{ form_start(form) }}
+				<div class="form-group">
+					<label for="exampleInputEmail1">Nom</label>
+					{{ form_widget(form.nom, {'attr': {'placeholder': user.nom}}) }}
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail1">Prenom</label>
+					{{ form_widget(form.prenom, {'attr': {'placeholder': user.prenom}}) }}
+				</div>
+				<div class="form-group">
+
+					<label for="exampleInputEmail1">Email</label>
+					{{ form_widget(form.email, {'attr': {'placeholder': user.email}}) }}
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail1">Password</label>
+					{{ form_widget(form.motDePasse, {'attr': {'placeholder': user.motDePasse}}) }}
+				</div>
+				<button type="submit" class="btn btn-success mr-2">Submit</button>
+				<button class="btn btn-light">Cancel</button>
+				{{ form_end(form) }}
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
