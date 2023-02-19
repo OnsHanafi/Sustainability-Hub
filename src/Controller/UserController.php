@@ -33,20 +33,21 @@ class UserController extends AbstractController
     }
 
 
-    #[Route('/user', name: 'app_user')]
-    public function index(): Response
-    {
-        return $this->render('user/index.html.twig', [
-            'controller_name' => 'UserController',
-        ]);
-    }
+    // #[Route('/user', name: 'app_user')]
+    // public function index(): Response
+    // {
+    //     return $this->render('user/index.html.twig', [
+    //         'controller_name' => 'UserController',
+    //     ]);
+    // }
 
-    #[Route('/users', name: 'event_list')]
-    public function ListEvents(UserRepository $repository)
+    #[Route('/users', name: 'app_users')]
+    public function ListEvents(UserRepository $userRepository, SessionInterface $session)
     {
-        $users = $repository(User::class)->findAll();
-        return $this->render('baseFront.html.twig', ['users' => $users]);
-        // return $this->json(["users" => $users]);
+        $users = $userRepository->findAll();
+        $userId = $session->get('user')['idUser'];
+        $loggedInUser = $userRepository->find($userId);
+        return $this->render('user/index.html.twig', ['users' => $users, 'loggedInUser' => $loggedInUser]);
     }
 
     //add user 
@@ -212,6 +213,20 @@ class UserController extends AbstractController
         $entityManager->flush();
 
         return $this->redirectToRoute('create_user');
+    }
+
+    //Delete user AfminSide 
+    #[Route('/delete_user/{id}', name: 'delete_user_Admin')]
+    public function deleteUserAdmin(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository, $id)
+    {
+        // find the user to delete
+        $user = $userRepository->find($id);
+
+        //delete from DB
+        $entityManager->remove($user);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_users');
     }
 
 
