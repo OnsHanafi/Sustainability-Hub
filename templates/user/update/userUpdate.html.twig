@@ -21,16 +21,16 @@
 						</h5>
 						{{ form_start(form) }}
 						<div>
-							{{ form_widget(form.nom, {'attr': {'placeholder': user.nom}}) }}
+							{{ form_widget(form.nom, {'attr': {'value': user.nom}}) }}
 						</div>
 						<div>
-							{{ form_widget(form.prenom, {'attr': {'placeholder': user.prenom}}) }}
+							{{ form_widget(form.prenom, {'attr': {'value': user.prenom}}) }}
 						</div>
 						<div>
-							{{ form_widget(form.email, {'attr': {'placeholder': user.email}}) }}
+							{{ form_widget(form.email, {'attr': {'value': user.email}}) }}
 						</div>
 						<div>
-							{{ form_widget(form.motDePasse, {'attr': {'placeholder': user.motDePasse}}) }}
+							{{ form_widget(form.motDePasse, {'attr': {'value': user.motDePasse}}) }}
 						</div>
 						<div class="d-flex justify-content-center">
 							<button type="submit" class="btn btn-primary">Update Profile</button>

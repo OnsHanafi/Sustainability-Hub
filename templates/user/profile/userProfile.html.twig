@@ -1,60 +1,95 @@
 {% extends 'baseFront.html.twig' %}
 
 {% block body %}
-	<section class="contact_section">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-6">
-					<div class="detail-box">
-						<div class="heading_container">
-							<h3>
-								PROFILE
-							</h3>
-							{# <p>
-																																																																													                It is a long established fact that a reader will be distracted
-																																																																													                by the readable
-																																																																													              </p> #}
-						</div>
-					</div>
-				</div>
-				<div class="col-md-6">
-					<div
-						class="contact-form">
-						{# <h5>
-																																																																		              Details du compte
-																																																																		            </h5> #}
-
-						<div style="color:white">
-							<h4>
-								Nom :
-								{{user.nom}}</h4>
-						</div>
-						<div style="color:white">
-							<h4>
-								Prenom :
-								{{user.prenom}}</h4>
-						</div>
-						<div style="color:white">
-							<h4>
-								Email :
-								{{user.email}}</h4>
-						</div>
-						<div class="text-wrapper" style="color:white">
-							<h4>
-								Genre :
-								{{user.genre}}</h4>
-						</div>
-						<div class="d-flex justify-content-center">
-							<a href="{{ path('update_user', {'id': user.idUser}) }}" type="button" class="btn btn-success btn-rounded btn-fw">Update</a>
-						</div>
-						<form action="{{ path('delete_user', {'id': user.idUser}) }}" method="post">
-							<button type="submit" class="btn btn-success btn-rounded btn-fw">Delete Account</button>
-							<input type="hidden" name="_method" value="DELETE">
-
-						</form>
+<section class="contact_section">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="detail-box" style=" ">
+					<div class="heading_container">
+						<h3>
+							PROFILE
+						</h3>
+						{# <p>
+																																																																																																																	                It is a long established fact that a reader will be distracted
+																																																																																																																	                by the readable
+																																																																																																																	              </p> #}
 					</div>
 				</div>
 			</div>
+			<div class="card-body">
+				<table class="table table-bordered" style="background-color: white;border: black; margin-top: 80px; ">
+					<tbody>
+						<tr>
+							<td>Nom:</td>
+							<td>{{user.nom}}</td>
+						</tr>
+						<tr>
+							<td>Prenom:</td>
+							<td>{{user.prenom}}</td>
+						</tr>
+						<tr>
+							<td>Email:</td>
+							<td>{{user.email}}</td>
+						</tr>
+						<tr>
+							<td>Genre:</td>
+							<td>{{user.genre}}</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="d-flex justify-content-center">
+					<a href="{{ path('update_user', {'id': user.idUser}) }}" type="button" class="btn btn-success btn-rounded btn-fw mr-2">Update</a>
+					<form action="{{ path('delete_user', {'id': user.idUser}) }}" method="post">
+						<button type="submit" class="btn btn-danger btn-rounded btn-fw">Delete Account</button>
+						<input type="hidden" name="_method" value="DELETE">
+					</form>
+				</div>
+			</div>
 		</div>
-	</section>
-{% endblock %}
+	</div>
+</div></section>{# {% endblock %} #}{# {% block body %}
+<section class="contact_section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card shadow">
+          <div class="card-header bg-primary text-white">
+            <h3 class="card-title">
+              PROFILE
+            </h3>
+          </div>
+          <div class="card-body">
+            <table class="table table-bordered">
+              <tbody>
+                <tr>
+                  <td>Nom:</td>
+                  <td>{{user.nom}}</td>
+                </tr>
+                <tr>
+                  <td>Prenom:</td>
+                  <td>{{user.prenom}}</td>
+                </tr>
+                <tr>
+                  <td>Email:</td>
+                  <td>{{user.email}}</td>
+                </tr>
+                <tr>
+                  <td>Genre:</td>
+                  <td>{{user.genre}}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="d-flex justify-content-center">
+              <a href="{{ path('update_user', {'id': user.idUser}) }}" type="button" class="btn btn-success btn-rounded btn-fw mr-2">Update</a>
+              <form action="{{ path('delete_user', {'id': user.idUser}) }}" method="post">
+                <button type="submit" class="btn btn-danger btn-rounded btn-fw">Delete Account</button>
+                <input type="hidden" name="_method" value="DELETE">
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> #}{% endblock %}
