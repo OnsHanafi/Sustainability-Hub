@@ -1,0 +1,11 @@
+{% extends 'baseback.html.twig' %}
+
+{%  block body %}
+    <h1>Events</h1>
+    <u1>
+        {% for events in events %}
+            <li>{{ events.title }}- {{ events.date |date('Y-m-d') }} -- { events.location }}</li>
+        {% endfor %}
+
+    </u1>
+{% endblock %}

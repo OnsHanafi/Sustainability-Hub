@@ -6,12 +6,10 @@
   color: $input-placeholder-color;
   width: auto;
   border: none;
-  line-height: 2.5;
 
   .input-group-text {
     background: transparent;
     border-color: $border-color;
-    line-height: 2.5;
   }
 }
 
@@ -22,9 +20,8 @@
   font-size: $input-font-size;
   color: $body-color;
   padding: 0 .75rem;
-  line-height: 2.5;
+  line-height: 14px;
   font-weight: 300;
-
 
   &.form-control-lg {
     padding: $input-btn-padding-y-lg .75rem;
@@ -50,9 +47,8 @@ select {
 .form-group {
   label {
     font-size: $default-font-size;
-    line-height: 2.5;
+    line-height: 1;
     vertical-align: top;
-
   }
 
   &.has-danger {
