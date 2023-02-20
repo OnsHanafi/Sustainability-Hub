@@ -5,18 +5,18 @@
 
 {% block body %}
 	{# {% for user in users %}
-							<tr>
-								<td>{{ user.nom }}</td>
-								<td>{{ user.prenom }}</td>
-								<td>{{ user.email }}</td>
-								<td>{{ user.genre }}</td>
-								<td>
-									<a href="{{ path('user_edit', {'id': user.idUser}) }}">Modify</a>
-									{% if loggedInUser.getGenre() == "admin" %}
-										<a href="{{ path('user_delete', {'id': user.idUser}) }}">Delete</a>
-									{% endif %}
-								</td>
-							</tr> #}
+									<tr>
+										<td>{{ user.nom }}</td>
+										<td>{{ user.prenom }}</td>
+										<td>{{ user.email }}</td>
+										<td>{{ user.genre }}</td>
+										<td>
+											<a href="{{ path('user_edit', {'id': user.idUser}) }}">Modify</a>
+											{% if loggedInUser.getGenre() == "admin" %}
+												<a href="{{ path('user_delete', {'id': user.idUser}) }}">Delete</a>
+											{% endif %}
+										</td>
+									</tr> #}
 	<div class="user-table-container">
 		<table class="user-table">
 			<thead>
@@ -30,6 +30,8 @@
 			</thead>
 			<tbody>
 				{% for user in users %}
+				{% if not (user.getGenre() == "admin") %}
+				
 					<tr>
 						<td>{{ user.nom }}</td>
 						<td>{{ user.prenom }}</td>
@@ -37,7 +39,7 @@
 						<td>{{ user.genre }}</td>
 						<td>
 							<div class="actions">
-								{% if loggedInUser.getGenre() == "admin" %}
+								{% if loggedInUser.getGenre() == "admin"   %}
 									<a class="btn btn-primary" href="#">Edit</a>
 
 									<a class="btn btn-danger" href="{{ path('delete_user_Admin', {'id': user.idUser}) }}">Delete</a>
@@ -45,6 +47,7 @@
 							</div>
 						</td>
 					</tr>
+					{% endif %}
 				{% endfor %}
 			</tbody>
 		</table>

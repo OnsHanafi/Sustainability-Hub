@@ -200,6 +200,19 @@ class UserController extends AbstractController
     // }
     // ALTERNATIVE 
 
+    //Delete user AfminSide 
+    #[Route('/delete_userAdmin/{id}', name: 'delete_user_Admin')]
+    public function deleteUserAdmin(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository, $id)
+    {
+        // find the user to delete
+        $user = $userRepository->find($id);
+
+        //delete from DB
+        $entityManager->remove($user);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_users');
+    }
 
     //Delete user 
     #[Route('/delete_user/{id}', name: 'delete_user')]
@@ -215,19 +228,7 @@ class UserController extends AbstractController
         return $this->redirectToRoute('create_user');
     }
 
-    //Delete user AfminSide 
-    #[Route('/delete_user/{id}', name: 'delete_user_Admin')]
-    public function deleteUserAdmin(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository, $id)
-    {
-        // find the user to delete
-        $user = $userRepository->find($id);
 
-        //delete from DB
-        $entityManager->remove($user);
-        $entityManager->flush();
-
-        return $this->redirectToRoute('app_users');
-    }
 
 
     // #[Route('/userCreate', name: 'Create_user')]
