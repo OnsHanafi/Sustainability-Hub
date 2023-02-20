@@ -1,77 +1,36 @@
 {% extends 'baseBack.html.twig' %}
 
 {% block body %}
-	{# <div class="col-lg-4 mx-auto">
-								<h2 class="text-center mb-4">Profile</h2>
-								<div class="auto-form-wrapper">
-						
-									<div class="form-group">
-										<div class="input-group">
-											<label class="form-control">Nom :{{user.nom}}</label>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="input-group">
-											<label class="form-control">prenom :{{user.prenom}}</label>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="input-group">
-											<label class="form-control">Email :{{user.email}}</label>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="input-group">
-											<label class="form-control">genre :{{user.genre}}</label>
-										</div>
-									</div>
-									<div class="form-group">
-										<a href="{{ path('update_user', {'id': user.idUser}) }}" type="button" class="btn btn-success btn-rounded btn-fw">Update</a>
-									</div>
-						
-						
-								</div>
-							</div> #}
-	<h2>Profile</h2>
-	<table class="table">
-		<thead>
-			<tr>
-				<th></th>
-				<th></th>
-
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>Nom</td>
-				<td>{{user.nom}}</td>
-			</tr>
-			<tr>
-				<td>prenom</td>
-				<td>{{user.prenom}}</td>
-			</tr>
-			<tr>
-				<td>Email</td>
-				<td>{{user.email}}</td>
-			</tr>
-			<tr>
-				<td>genre</td>
-				<td>{{user.genre}}</td>
-			</tr>
-
-		</tbody>
-	</table>
-	<a href="{{ path('update_user', {'id': user.idUser}) }}" type="button" class="btn btn-success btn-rounded btn-fw" style="
-								margin-left: 700px;
-								margin-right: 300px;
-								">Update</a>
-	<form action="{{ path('delete_user', {'id': user.idUser}) }}" method="post">
-		<button type="submit" class="btn btn-success btn-rounded btn-fw" style="
-			    margin-left: 700px;
-			    margin-top: 20px;
-			">Delete Profile</button>
-		<input type="hidden" name="_method" value="DELETE">
-
-	</form>
-
+	<div class="container">
+		<h2>Profile</h2>
+		<table class="table table-bordered shadow-sm">
+			<tbody>
+				<tr>
+					<th scope="row">Nom</th>
+					<td>{{ user.nom }}</td>
+				</tr>
+				<tr>
+					<th scope="row">Prenom</th>
+					<td>{{ user.prenom }}</td>
+				</tr>
+				<tr>
+					<th scope="row">Email</th>
+					<td>{{ user.email }}</td>
+				</tr>
+				<tr>
+					<th scope="row">Genre</th>
+					<td>{{ user.genre }}</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="d-flex justify-content-center" style="
+				    margin-top: 20px;
+				    margin-left: 500px;">
+			<a href="{{ path('update_user', {'id': user.idUser}) }}" type="button" class="btn btn-success btn-rounded btn-fw mx-3">Update</a>
+			<form action="{{ path('delete_user', {'id': user.idUser}) }}" method="post">
+				<button type="submit" class="btn btn-danger btn-rounded btn-fw mx-3">Delete Profile</button>
+				<input type="hidden" name="_method" value="DELETE">
+			</form>
+		</div>
+	</div>
 {% endblock %}
