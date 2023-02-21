@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
-
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserController extends AbstractController
 {
@@ -41,14 +41,7 @@ class UserController extends AbstractController
     //     ]);
     // }
 
-    #[Route('/users', name: 'app_users')]
-    public function ListEvents(UserRepository $userRepository, SessionInterface $session)
-    {
-        $users = $userRepository->findAll();
-        $userId = $session->get('user')['idUser'];
-        $loggedInUser = $userRepository->find($userId);
-        return $this->render('user/index.html.twig', ['users' => $users, 'loggedInUser' => $loggedInUser]);
-    }
+
 
     //add user 
     #[Route('/create_user', name: 'create_user')]
@@ -178,42 +171,6 @@ class UserController extends AbstractController
     }
 
 
-    // public function updateUser(int $id, Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager)
-    // {
-    // $user = $userRepository->findUserById($id);
-
-    // if (!$user) {
-    //     return $this->json(['error' => 'User not found'], 404);
-    // }
-
-    // $data = json_decode($request->getContent(), true);
-    // $user->setNom($data['nom']);
-    // $user->setPrenom($data['prenom']);
-    // $user->setEmail($data['email']);
-    // $user->setMotDePasse($data['motDePasse']);
-    // $user->setGenre($data['genre']);
-
-    // $entityManager->persist($user);
-    // $entityManager->flush();
-
-    // return $this->json(['message' => 'User updated successfully', $user]);
-    // }
-    // ALTERNATIVE 
-
-    //Delete user AfminSide 
-    #[Route('/delete_userAdmin/{id}', name: 'delete_user_Admin')]
-    public function deleteUserAdmin(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository, $id)
-    {
-        // find the user to delete
-        $user = $userRepository->find($id);
-
-        //delete from DB
-        $entityManager->remove($user);
-        $entityManager->flush();
-
-        return $this->redirectToRoute('app_users');
-    }
-
     //Delete user 
     #[Route('/delete_user/{id}', name: 'delete_user')]
     public function deleteUser(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository, $id)
@@ -228,37 +185,67 @@ class UserController extends AbstractController
         return $this->redirectToRoute('create_user');
     }
 
+    //////////////// Admin
+
+    // get users list 
+    #[Route('/admin/users', name: 'app_users')]
+    public function ListEvents(UserRepository $userRepository, SessionInterface $session)
+    {
+        $users = $userRepository->findAll();
+        $userId = $session->get('user')['idUser'];
+        $loggedInUser = $userRepository->find($userId);
+        return $this->render('user/admin/index.html.twig', ['users' => $users, 'loggedInUser' => $loggedInUser]);
+    }
+
+    //Delete user AfminSide 
+    #[Route('/admin/delete_user/{id}', name: 'delete_user_Admin')]
+    public function deleteUserAdmin(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository, $id)
+    {
+        // find the user to delete
+        $user = $userRepository->find($id);
+
+        //delete from DB
+        $entityManager->remove($user);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_users');
+    }
 
 
 
-    // #[Route('/userCreate', name: 'Create_user')]
-    // public function create(Request $request): Response
-    // {
+    #[Route('/admin/users/edit/{id}', name: 'admin_edit_user')]
+    public function editUserAdmin(Request $request, User $user, $id)
+    {
+        // Get the admin
+        $session = $request->getSession();
+
+        // Get the admin user from the session
+        $admin = $session->get('user')['idUser'];
+
+        // Check if the admin user exists in the session
+        if (!$admin) {
+            throw new \Exception('Admin user not found in session');
+        }
+
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user = $form->getData();
 
 
+            // Update the genre of the user
+            $user->setGenre($request->request->get('user')['genre']);
 
-    //     $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->flush();
 
-    //     $user = new User();
+            return $this->redirectToRoute('app_users', ['id' => $admin]);
+        }
 
-
-    //     $form = $this->createForm(UserType::class, $user);
-
-    //     $form->handleRequest($request);
-    //     if ($form->isSubmitted() && $form->isValid()) {
-
-    //         $entityManager->persist($user);
-
-
-    //         $entityManager->flush();
-    //         return $this->redirectToRoute('app_user');
-    //     } else {
-    //         return $this->render(
-    //             "user/userRegister.html.twig",
-    //             [
-    //                 'userForm' => $form->createView()
-    //             ]
-    //         );
-    //     }
-    // }
+        return $this->render('user/admin/adminUpdateUser.html.twig', [
+            'form' => $form->createView(),
+            'user' => $user,
+        ]);
+    }
 }

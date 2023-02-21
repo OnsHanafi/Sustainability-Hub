@@ -40,7 +40,7 @@
 						<td>
 							<div class="actions">
 								{% if loggedInUser.getGenre() == "admin"   %}
-									<a class="btn btn-primary" href="#">Edit</a>
+									<a class="btn btn-primary" href="{{ path('admin_edit_user', {'id': user.idUser})}}">Edit</a>
 
 									<a class="btn btn-danger" href="{{ path('delete_user_Admin', {'id': user.idUser}) }}">Delete</a>
 								{% endif %}
