@@ -92,7 +92,7 @@ class UserController extends AbstractController
                     'motDePasse' => $existingUser->getMotDePasse(),
                     'genre' => $existingUser->getGenre(),
                 ]);
-                return $this->redirectToRoute('show_user', ['idUser' => $existingUser->getIdUser()]);
+                return $this->redirectToRoute('show_user', ['id' => $existingUser->getIdUser()]);
             }
         }
 
@@ -102,7 +102,7 @@ class UserController extends AbstractController
     }
 
     //Profile
-    #[Route('/user/{idUser}', name: 'show_user')]
+    #[Route('/user/{id}', name: 'show_user')]
     public function showUser(SessionInterface $session, UserRepository $userRepository)
     {
         $userId = $session->get('user')['idUser'];
