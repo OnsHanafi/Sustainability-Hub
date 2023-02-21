@@ -67,7 +67,7 @@ class UserController extends AbstractController
 
     //login
     #[Route('/login', name: 'app_login')]
-    public function login(Request $request, UserRepository $userRepository,  SessionInterface $session): Response
+    public function login(Request $request, UserRepository $userRepository, SessionInterface $session): Response
     {
         $form = $this->createForm(LoginType::class);
         $form->handleRequest($request);
@@ -75,14 +75,10 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
             $existingUser = $userRepository->findOneBy(['email' => $user->getEmail()]);
+
             if (!$existingUser) {
-                // throw new BadCredentialsException('Invalid email or password');
-            }
-            // if password doesn't match : throw new BadCredentialsException('Invalid email or password');
-
-            if ($user->getMotDePasse() == $existingUser->getMotDePasse()) {
-
-
+                $this->addFlash('error', 'Invalid email or password');
+            } else if ($user->getMotDePasse() == $existingUser->getMotDePasse()) {
                 // Set user attributes in session
                 $session->set('user', [
                     'idUser' => $existingUser->getIdUser(),
@@ -93,6 +89,8 @@ class UserController extends AbstractController
                     'genre' => $existingUser->getGenre(),
                 ]);
                 return $this->redirectToRoute('show_user', ['id' => $existingUser->getIdUser()]);
+            } else {
+                $this->addFlash('error', 'Invalid email or password');
             }
         }
 
@@ -100,6 +98,8 @@ class UserController extends AbstractController
             'loginForm' => $form->createView(),
         ]);
     }
+
+
 
     //Profile
     #[Route('/user/{id}', name: 'show_user')]
@@ -154,7 +154,7 @@ class UserController extends AbstractController
 
             $this->addFlash('success', 'User updated successfully.');
 
-            return $this->redirectToRoute('show_user', ['idUser' => $user->getIdUser()]);
+            return $this->redirectToRoute('show_user', ['id' => $user->getIdUser()]);
         }
 
         if ($user->getGenre() === 'admin') {
@@ -185,7 +185,7 @@ class UserController extends AbstractController
         return $this->redirectToRoute('create_user');
     }
 
-    //////////////// Admin
+    ////////////// Admin gestion users 
 
     // get users list 
     #[Route('/admin/users', name: 'app_users')]
@@ -195,7 +195,7 @@ class UserController extends AbstractController
         // the admins id
         $userId = $session->get('user')['idUser'];
         $loggedInUser = $userRepository->find($userId);
-        dump($loggedInUser);
+        // dump($loggedInUser);
         // render the users list
         return $this->render('user/admin/index.html.twig', ['users' => $users, 'user' => $loggedInUser]);
     }
