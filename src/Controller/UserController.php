@@ -53,11 +53,15 @@ class UserController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager = $doctrine->getManager();
-                $entityManager->persist($user);
-                $entityManager->flush();
-                // return $this->json(['message' => ' creating user', $user]);
-                return $this->redirectToRoute('app_login');
+                $existingUser = $userRepository->findOneBy(['email' => $user->getEmail()]);
+                if ($existingUser) {
+                    $form->get('email')->addError(new FormError('Email Already exists , Change it !!'));
+                } else {
+                    $entityManager = $doctrine->getManager();
+                    $entityManager->persist($user);
+                    $entityManager->flush();
+                    return $this->redirectToRoute('app_login');
+                }
             }
             return $this->renderForm('user/userRegister.html.twig', [
 
@@ -78,7 +82,7 @@ class UserController extends AbstractController
             $existingUser = $userRepository->findOneBy(['email' => $user->getEmail()]);
 
             if (!$existingUser) {
-                $form->get('motDePasse')->addError(new FormError('Email doesn`t exist'));
+                $form->get('email')->addError(new FormError('Email doesn`t exist'));
             } elseif ($user->getMotDePasse() != $existingUser->getMotDePasse()) {
                 $form->get('motDePasse')->addError(new FormError('Incorrect password'));
             } else if ($user->getMotDePasse() == $existingUser->getMotDePasse()) {
