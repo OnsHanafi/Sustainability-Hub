@@ -19,18 +19,22 @@
 						<h5>
 							modifier vos données
 						</h5>
-						{{ form_start(form) }}
+						{{ form_start(form , {'attr':{"novalidate":"novalidate()"}}) }}
 						<div>
 							{{ form_widget(form.nom, {'attr': {'value': user.nom}}) }}
+							{{ form_errors(form.nom) }}
 						</div>
 						<div>
 							{{ form_widget(form.prenom, {'attr': {'value': user.prenom}}) }}
+							{{ form_errors(form.prenom) }}
 						</div>
 						<div>
 							{{ form_widget(form.email, {'attr': {'value': user.email}}) }}
+							{{ form_errors(form.email) }}
 						</div>
 						<div>
 							{{ form_widget(form.motDePasse, {'attr': {'value': user.motDePasse}}) }}
+							{{ form_errors(form.motDePasse) }}
 						</div>
 						<div class="d-flex justify-content-center">
 							<button type="submit" class="btn btn-primary">Update Profile</button>

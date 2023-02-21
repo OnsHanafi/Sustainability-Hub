@@ -78,13 +78,16 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // get user from form to check for errors
             $user = $form->getData();
             $existingUser = $userRepository->findOneBy(['email' => $user->getEmail()]);
-
+            // User doesn't exist 
             if (!$existingUser) {
                 $form->get('email')->addError(new FormError('Email doesn`t exist'));
+                // wrong password
             } elseif ($user->getMotDePasse() != $existingUser->getMotDePasse()) {
                 $form->get('motDePasse')->addError(new FormError('Incorrect password'));
+                // everything is wright !!
             } else if ($user->getMotDePasse() == $existingUser->getMotDePasse()) {
                 // Set user attributes in session
                 $session->set('user', [
@@ -110,18 +113,20 @@ class UserController extends AbstractController
     #[Route('/user/{id}', name: 'show_user')]
     public function showUser(SessionInterface $session, UserRepository $userRepository)
     {
+        // get logged in user from session
         $userId = $session->get('user')['idUser'];
         $user = $userRepository->find($userId);
-
+        // User 404
         if (!$user) {
             throw $this->createNotFoundException('User not found');
         }
-
+        // User = admin
         if ($user->getGenre() === 'admin') {
             return $this->render('user/profile/adminProfile.html.twig', [
                 'user' => $user,
             ]);
         } else {
+            // User != admin
             return $this->render('user/profile/userProfile.html.twig', [
                 'user' => $user,
             ]);
@@ -131,7 +136,7 @@ class UserController extends AbstractController
 
 
 
-    // update user 
+    // update user + admin
     #[Route('/update_user/{id}', name: 'update_user')]
     public function updateUser(Request $request, EntityManagerInterface $entityManager, SessionInterface $session, UserRepository $userRepository)
     {
@@ -147,21 +152,26 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // retrieve the updated user data from the form
             $updatedUser = $form->getData();
+            $existingUser = $userRepository->findOneBy(['email' => $updatedUser->getEmail()]);
+            // error if the email already exists in the DB
+            if ($existingUser &&  ($existingUser->getIdUser() != $user->getIdUser())) {
+                $form->get('email')->addError(new FormError('Email Already exists'));
+            } else {
+                // update the user entity with the new data
+                $user->setNom($updatedUser->getNom());
+                $user->setPrenom($updatedUser->getPrenom());
+                $user->setEmail($updatedUser->getEmail());
+                $user->setMotDePasse($updatedUser->getMotDePasse());
+                // update the user in the database
+                $entityManager->persist($user);
+                $entityManager->flush();
 
-            // update the user entity with the new data
-            $user->setNom($updatedUser->getNom());
-            $user->setPrenom($updatedUser->getPrenom());
-            $user->setEmail($updatedUser->getEmail());
-            $user->setMotDePasse($updatedUser->getMotDePasse());
-            // update the user in the database
-            $entityManager->persist($user);
-            $entityManager->flush();
+                $this->addFlash('success', 'User updated successfully.');
 
-            $this->addFlash('success', 'User updated successfully.');
-
-            return $this->redirectToRoute('show_user', ['id' => $user->getIdUser()]);
+                return $this->redirectToRoute('show_user', ['id' => $user->getIdUser()]);
+            }
         }
-
+        // rendering twigs depending on user's genre
         if ($user->getGenre() === 'admin') {
             return $this->renderForm('user/update/adminUpdate.html.twig', [
                 'form' => $form,
@@ -190,7 +200,7 @@ class UserController extends AbstractController
         return $this->redirectToRoute('create_user');
     }
 
-    ////////////// Admin gestion users 
+    ////////////// Admin gestion users //////////////////////////////
 
     // get users list 
     #[Route('/admin/users', name: 'app_users')]
