@@ -26,13 +26,15 @@
 						<h5>
 							Login
 						</h5>
-						{{ form_start(loginForm) }}
+						{{ form_start(loginForm , {'attr':{"novalidate":"novalidate()"}}) }}
 						<form action="{{ path('app_login') }}">
 							<div>
 								{{ form_widget(loginForm.email, {'attr': {'placeholder': 'Email'}}) }}
+								{{ form_errors(loginForm.email) }}
 							</div>
 							<div>
 								{{ form_widget(loginForm.motDePasse, {'attr': {'placeholder': 'Password'}}) }}
+								{{ form_errors(loginForm.motDePasse) }}
 							</div>
 							{{ form_end(loginForm) }}
 
@@ -43,21 +45,21 @@
 		</div>
 	</section>
 	{# <h1>
-			Login
-			</h1> #}
+					Login
+					</h1> #}
 {# 
 		{% if app.session.flashbag.peek('error') is defined %}
 			<div class="alert alert-danger"> {{ app.session.flashbag.get('error') }}</div>
 	{% endif %} #}
 
 	{# {{ form_start(loginForm) }}
-		
-			{{ form_label(loginForm.email) }}
-			{{ form_widget(loginForm.email) }}
-		
-			{{ form_label(loginForm.mot_de_passe) }}
-			{{ form_widget(loginForm.mot_de_passe) }}<button type="submit">
-				Login</button>
-		
-			{{ form_end(loginForm) }} #}
+				
+					{{ form_label(loginForm.email) }}
+					{{ form_widget(loginForm.email) }}
+				
+					{{ form_label(loginForm.mot_de_passe) }}
+					{{ form_widget(loginForm.mot_de_passe) }}<button type="submit">
+						Login</button>
+				
+					{{ form_end(loginForm) }} #}
 {% endblock %}

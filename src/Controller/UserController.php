@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -77,7 +78,9 @@ class UserController extends AbstractController
             $existingUser = $userRepository->findOneBy(['email' => $user->getEmail()]);
 
             if (!$existingUser) {
-                $this->addFlash('error', 'Invalid email or password');
+                $form->get('motDePasse')->addError(new FormError('Email doesn`t exist'));
+            } elseif ($user->getMotDePasse() != $existingUser->getMotDePasse()) {
+                $form->get('motDePasse')->addError(new FormError('Incorrect password'));
             } else if ($user->getMotDePasse() == $existingUser->getMotDePasse()) {
                 // Set user attributes in session
                 $session->set('user', [
@@ -89,8 +92,6 @@ class UserController extends AbstractController
                     'genre' => $existingUser->getGenre(),
                 ]);
                 return $this->redirectToRoute('show_user', ['id' => $existingUser->getIdUser()]);
-            } else {
-                $this->addFlash('error', 'Invalid email or password');
             }
         }
 
