@@ -29,20 +29,20 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for user in users %}
-				{% if not (user.getGenre() == "admin") %}
+				{% for Otheruser in users %}
+				{% if not (Otheruser.getGenre() == "admin") %}
 				
 					<tr>
-						<td>{{ user.nom }}</td>
-						<td>{{ user.prenom }}</td>
-						<td>{{ user.email }}</td>
-						<td>{{ user.genre }}</td>
+						<td>{{ Otheruser.nom }}</td>
+						<td>{{ Otheruser.prenom }}</td>
+						<td>{{ Otheruser.email }}</td>
+						<td>{{ Otheruser.genre }}</td>
 						<td>
 							<div class="actions">
-								{% if loggedInUser.getGenre() == "admin"   %}
-									<a class="btn btn-primary" href="{{ path('admin_edit_user', {'id': user.idUser})}}">Edit</a>
+								{% if user.getGenre() == "admin"   %}
+									<a class="btn btn-primary" href="{{ path('admin_edit_user', {'id': Otheruser.idUser})}}">Edit</a>
 
-									<a class="btn btn-danger" href="{{ path('delete_user_Admin', {'id': user.idUser}) }}">Delete</a>
+									<a class="btn btn-danger" href="{{ path('delete_user_Admin', {'id': Otheruser.idUser}) }}">Delete</a>
 								{% endif %}
 							</div>
 						</td>

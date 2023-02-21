@@ -192,9 +192,12 @@ class UserController extends AbstractController
     public function ListEvents(UserRepository $userRepository, SessionInterface $session)
     {
         $users = $userRepository->findAll();
+        // the admins id
         $userId = $session->get('user')['idUser'];
         $loggedInUser = $userRepository->find($userId);
-        return $this->render('user/admin/index.html.twig', ['users' => $users, 'loggedInUser' => $loggedInUser]);
+        dump($loggedInUser);
+        // render the users list
+        return $this->render('user/admin/index.html.twig', ['users' => $users, 'user' => $loggedInUser]);
     }
 
     //Delete user AfminSide 
