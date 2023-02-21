@@ -16,12 +16,12 @@
 						</h3>
 						<p>
 							Create your  account now and get immediate access to workshops
-																																																																																																																																																																																																																																																					Blogs and Events
+																																																																																																																																																																																																																																																																																																																																																							Blogs and Events
 
 						</p>
 						{# <a href="">
-																																																																																																																																																																																																																															REGISTER NOW
-																																																																																																																																																																																																																														</a> #}
+																																																																																																																																																																																																																																																																																																																			REGISTER NOW
+																																																																																																																																																																																																																																																																																																																		</a> #}
 					</div>
 				</div>
 				<div class="col-md-6">
@@ -29,23 +29,28 @@
 						<h5>
 							Register Now
 						</h5>
-						{{ form_start(userForm ) }}
+						{{ form_start(userForm , {'attr':{"novalidate":"novalidate()"}}) }}
 						<form action="{{ path('create_user') }}">
 
 							<div>
 								{{ form_widget(userForm.nom,  {'attr': {'placeholder': 'nom'}}) }}
+								{{ form_errors(userForm.nom) }}
 							</div>
 							<div>
 								{{ form_widget(userForm.prenom, {'attr': {'placeholder': 'prenom'}})}}
+								{{ form_errors(userForm.prenom) }}
 							</div>
 							<div>
 								{{ form_widget(userForm.email, {'attr': {'placeholder': 'Email'}}) }}
+								{{ form_errors(userForm.email) }}
 							</div>
 							<div>
 								{{ form_widget(userForm.motDePasse, {'attr': {'placeholder': 'Password'}}) }}
+								{{ form_errors(userForm.motDePasse) }}
 							</div>
 							<div>
 								{{ form_widget(userForm.genre, {'attr': {'class': 'form-control'}}) }}
+								{{ form_errors(userForm.genre) }}
 							</div>
 							{{ form_end(userForm ) }}
 
