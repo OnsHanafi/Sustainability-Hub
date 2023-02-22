@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="my-4">New Participant</h1>
+
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'my-4'}}) }}
+
+        <div class="form-group">
+            {{ form_label(form.name, 'Name', {'label_attr': {'class': 'control-label'}}) }}
+            {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.name, {'attr': {'class': 'text-danger'}}) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.phoneNumber, 'Phone Number', {'label_attr': {'class': 'control-label'}}) }}
+            {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.phoneNumber, {'attr': {'class': 'text-danger'}}) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.Events, 'Event', {'label_attr': {'class': 'control-label'}}) }}
+            {{ form_widget(form.Events, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.Events, {'attr': {'class': 'text-danger'}}) }}
+        </div>
+
+{#        <button type="submit" class="btn btn-primary my-4">Save</button>#}
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

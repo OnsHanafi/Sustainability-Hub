@@ -1,0 +1,29 @@
+{% extends 'baseback.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('/backoffice/css/demo_1/participant.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="text-center mb-4">Liste des participants</h1>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Téléphone</th>
+                <th>Événement</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for participant in participant %}
+                <tr>
+                    <td>{{ participant.name }}</td>
+                    <td>{{ participant.phoneNumber }}</td>
+                    <td>{{ participant.Events.title }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
