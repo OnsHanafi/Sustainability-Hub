@@ -14,28 +14,28 @@
 							<label for="exampleInputEmail1">Nom</label>
 						</td>
 						<td>{{ form_widget(form.nom, {'attr': {'value': user.nom}}) }}</td>
-						<td>{{ form_errors(form.nom) }}</td>
+						<td style="padding-right: 400px;padding-top: 30px;color: green ;" >{{ form_errors(form.nom) }}</td>
 					</tr>
 					<tr>
 						<td>
 							<label for="exampleInputEmail1">Prenom</label>
 						</td>
 						<td>{{ form_widget(form.prenom, {'attr': {'value': user.prenom}}) }}</td>
-						<td>{{ form_errors(form.prenom) }}</td>
+						<td  style="color: green ;"	>{{ form_errors(form.prenom) }}</td>
 					</tr>
 					<tr>
 						<td>
 							<label for="exampleInputEmail1">Email</label>
 						</td>
 						<td>{{ form_widget(form.email, {'attr': {'value': user.email}}) }}</td>
-						<td>{{ form_errors(form.email) }}</td>
+						<td  style="color: green ;">{{ form_errors(form.email) }}</td>
 					</tr>
 					<tr>
 						<td>
 							<label for="exampleInputEmail1">Password</label>
 						</td>
 						<td>{{ form_widget(form.motDePasse, {'attr': {'value': user.motDePasse}}) }}</td>
-						<td>{{ form_errors(form.motDePasse) }}</td>
+						<td style="color: green ;">{{ form_errors(form.motDePasse) }}</td>
 					</tr>
 					<tr>
 						<td>
