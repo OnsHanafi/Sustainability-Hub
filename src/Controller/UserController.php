@@ -218,8 +218,9 @@ class UserController extends AbstractController
     #[Route('/logout', name: 'app_logout')]
     public function logout(SessionInterface $session): Response
     {
+        // remove user from session
         $session->remove('user');
-
+        // redirect to login 
         return $this->redirectToRoute('app_login');
     }
 
