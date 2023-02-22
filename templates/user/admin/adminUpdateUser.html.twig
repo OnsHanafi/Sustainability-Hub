@@ -6,21 +6,15 @@
 			<div class="card-body">
 				<h2 class="card-title">Update User Infos</h2>
 				{# <p class="card-description">Modifier vos données</p> #}
-				
+
 				<table class="table">
-				{{ form_start(form , {'attr':{"novalidate":"novalidate()"}}) }}
+					{{ form_start(form , {'attr':{"novalidate":"novalidate()"}}) }}
 					<tr>
 						<td>
 							<label for="exampleInputEmail1">Nom</label>
 						</td>
 						<td>{{ form_widget(form.nom, {'attr': {'value': user.nom}}) }}</td>
-						<td>
-							{% if form_errors(form.nom) %}
-								<div class="invalid-feedback">
-									{{ form_errors(form.nom) }}
-								</div>
-							{% endif %}
-						</td>
+						<td>{{ form_errors(form.nom) }}</td>
 					</tr>
 					<tr>
 						<td>
