@@ -32,9 +32,23 @@
 								{{ form_widget(loginForm.email, {'attr': {'placeholder': 'Email'}}) }}
 								{{ form_errors(loginForm.email) }}
 							</div>
-							<div>
-								{{ form_widget(loginForm.motDePasse, {'attr': {'placeholder': 'Password'}}) }}
+							<div style="display: flex; ">
+							<div style="float: left;  width:500px; ">
+								{{ form_widget(loginForm.motDePasse, {'attr': {'placeholder': 'Password'}, 'type': showPassword ? 'text' : 'password' , 'id':'loginForm_motDePasse'}) }}
 								{{ form_errors(loginForm.motDePasse) }}
+							</div>
+							<div style="float: right; width:10%; height :20px;" ><input type="checkbox" id="showPassword" name="showPassword" onclick="togglePassword()" style="height: 30px;margin-top: 15px;">
+								
+								<script>
+									function togglePassword() {
+										var passwordField = document.getElementById("loginForm_motDePasse");
+										var showPassword = document.getElementById("showPassword");
+										if (showPassword.checked) {
+										passwordField.type = "text";
+										} else {
+										passwordField.type = "password";
+										}
+										}</script></div>
 							</div>
 							{{ form_end(loginForm) }}
 
@@ -45,21 +59,21 @@
 		</div>
 	</section>
 	{# <h1>
-					Login
-					</h1> #}
+										Login
+										</h1> #}
 {# 
 		{% if app.session.flashbag.peek('error') is defined %}
 			<div class="alert alert-danger"> {{ app.session.flashbag.get('error') }}</div>
 	{% endif %} #}
 
 	{# {{ form_start(loginForm) }}
-				
-					{{ form_label(loginForm.email) }}
-					{{ form_widget(loginForm.email) }}
-				
-					{{ form_label(loginForm.mot_de_passe) }}
-					{{ form_widget(loginForm.mot_de_passe) }}<button type="submit">
-						Login</button>
-				
-					{{ form_end(loginForm) }} #}
+									
+										{{ form_label(loginForm.email) }}
+										{{ form_widget(loginForm.email) }}
+									
+										{{ form_label(loginForm.mot_de_passe) }}
+										{{ form_widget(loginForm.mot_de_passe) }}<button type="submit">
+											Login</button>
+									
+										{{ form_end(loginForm) }} #}
 {% endblock %}

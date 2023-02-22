@@ -77,6 +77,12 @@ class UserController extends AbstractController
         $form = $this->createForm(LoginType::class);
         $form->handleRequest($request);
 
+        //show password 
+        $showPassword = false;
+        if ($request->request->has('showPassword')) {
+            $showPassword = true;
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
             // get user from form to check for errors
             $user = $form->getData();
@@ -104,6 +110,7 @@ class UserController extends AbstractController
 
         return $this->render('user/login.html.twig', [
             'loginForm' => $form->createView(),
+            'showPassword' => $showPassword,
         ]);
     }
 
