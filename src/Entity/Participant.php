@@ -22,7 +22,7 @@ class Participant
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message:"phone number should only containt numbers")]
-    #[Assert\Regex('/^\d+$/')]
+    #[Assert\Regex(array('pattern' => '/^[0-9]\d*$/'))]
     private ?int $phone_number = null;
 
 

@@ -16,11 +16,11 @@
             </tr>
             </thead>
             <tbody>
-            {% for participant in participant %}
+            {% for participant in participants %}
                 <tr>
                     <td>{{ participant.name }}</td>
-                    <td>{{ participant.phoneNumber }}</td>
-                    <td>{{ participant.Events.title }}</td>
+                    <td>{{ participant.phone_number }}</td>
+                    <td>{{ participant.title }}</td>
                 </tr>
             {% endfor %}
             </tbody>

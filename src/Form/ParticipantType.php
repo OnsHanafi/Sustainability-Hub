@@ -25,7 +25,6 @@ class ParticipantType extends AbstractType
                 'multiple' => false,
       ])
         ->add('save',SubmitType::class);
-
     }
 
     public function configureOptions(OptionsResolver $resolver): void

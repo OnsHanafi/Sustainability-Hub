@@ -41,6 +41,7 @@ class Events
     private ?string $location = null;
 
 
+
     /**
      * @Assert\NotBlank
      */
