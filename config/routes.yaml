@@ -1,3 +1,8 @@
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
+
+#event_add:
+#  path: /back/add
+#  controller: App\Controller\EventController::addEvent
+#  methods: [GET, POST]
