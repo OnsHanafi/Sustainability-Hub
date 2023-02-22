@@ -214,6 +214,17 @@ class UserController extends AbstractController
         return $this->redirectToRoute('create_user');
     }
 
+    // Logout 
+    #[Route('/logout', name: 'app_logout')]
+    public function logout(SessionInterface $session): Response
+    {
+        $session->remove('user');
+
+        return $this->redirectToRoute('app_login');
+    }
+
+
+
     ////////////// Admin gestion users //////////////////////////////
 
     // get users list 
@@ -242,6 +253,8 @@ class UserController extends AbstractController
 
         return $this->redirectToRoute('app_users');
     }
+
+
 
 
 

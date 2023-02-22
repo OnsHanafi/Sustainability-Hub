@@ -80,7 +80,13 @@
 									<a class="nav-link" href="contact.html">Reclamation</a>
 								</li>
 								<li class="nav-item">
-									<a class="nav-link" href="login.html">Login</a>
+									{% if app.session.get('user')%}
+										<!-- User is logged in, so don't display login button -->
+										<a class="nav-link" href="{{ path('app_logout') }}">logout</a>
+									{% else %}
+										<!-- User is not logged in, so display login button -->
+										<a class="nav-link" href="{{ path('app_login') }}">Login</a>
+									{% endif %}
 								</li>
 							</ul>
 							<form class="form-inline my-2 my-lg-0 ml-0 ml-lg-4 mb-3 mb-lg-0">
@@ -242,8 +248,8 @@
 									</h3>
 									<p>
 										It is a long established fact that a reader will be distracted
-																																																																																																																																																																				                by the readable content of a page when looking at its layout.
-																																																																																																																																																																				                The point of using Lorem Ipsum is that it has a more it
+																																																																																																																																																																																								                by the readable content of a page when looking at its layout.
+																																																																																																																																																																																								                The point of using Lorem Ipsum is that it has a more it
 									</p>
 									<a href="">
 										Read More
@@ -353,7 +359,7 @@
 								</h3>
 								<p>
 									Create your free account now and get immediate access to 100s of
-																																																																																																																																																			              online courses
+																																																																																																																																																																					              online courses
 								</p>
 								<a href="">
 									REGISTER NOW
@@ -472,9 +478,9 @@
 										</h5>
 										<p>
 											It is a long established fact that a reader will be
-																																																																																																																																																																																					                  distracted by the readable content of a page when looking at
-																																																																																																																																																																																					                  its layout. The point of using Lorem Ipsum is that it has a
-																																																																																																																																																																																					                  more-or-less normal distribution of letters
+																																																																																																																																																																																																											                  distracted by the readable content of a page when looking at
+																																																																																																																																																																																																											                  its layout. The point of using Lorem Ipsum is that it has a
+																																																																																																																																																																																																											                  more-or-less normal distribution of letters
 										</p>
 									</div>
 								</div>
@@ -490,9 +496,9 @@
 										</h5>
 										<p>
 											It is a long established fact that a reader will be
-																																																																																																																																																																																					                  distracted by the readable content of a page when looking at
-																																																																																																																																																																																					                  its layout. The point of using Lorem Ipsum is that it has a
-																																																																																																																																																																																					                  more-or-less normal distribution of letters
+																																																																																																																																																																																																											                  distracted by the readable content of a page when looking at
+																																																																																																																																																																																																											                  its layout. The point of using Lorem Ipsum is that it has a
+																																																																																																																																																																																																											                  more-or-less normal distribution of letters
 										</p>
 									</div>
 								</div>
@@ -508,9 +514,9 @@
 										</h5>
 										<p>
 											It is a long established fact that a reader will be
-																																																																																																																																																																																					                  distracted by the readable content of a page when looking at
-																																																																																																																																																																																					                  its layout. The point of using Lorem Ipsum is that it has a
-																																																																																																																																																																																					                  more-or-less normal distribution of letters
+																																																																																																																																																																																																											                  distracted by the readable content of a page when looking at
+																																																																																																																																																																																																											                  its layout. The point of using Lorem Ipsum is that it has a
+																																																																																																																																																																																																											                  more-or-less normal distribution of letters
 										</p>
 									</div>
 								</div>
@@ -543,7 +549,7 @@
 									</h3>
 									<p>
 										It is a long established fact that a reader will be distracted
-																																																																																																																																																																				                by the readable
+																																																																																																																																																																																								                by the readable
 									</p>
 								</div>
 							</div>
@@ -626,8 +632,8 @@
 								</h5>
 								<p>
 									There are many variations of passages of Lorem Ipsum available,
-																																																																																																																																																			              but the majority have suffered alteration in some form, by
-																																																																																																																																																			              injected humou
+																																																																																																																																																																					              but the majority have suffered alteration in some form, by
+																																																																																																																																																																					              injected humou
 								</p>
 							</div>
 						</div>
