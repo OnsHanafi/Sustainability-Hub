@@ -52,6 +52,12 @@ class UserController extends AbstractController
             $form = $this->createForm(UserType::class, $user);
             $form->handleRequest($request);
 
+            //show password 
+            $showPassword = false;
+            if ($request->request->has('showPassword')) {
+                $showPassword = true;
+            }
+
             if ($form->isSubmitted() && $form->isValid()) {
                 $existingUser = $userRepository->findOneBy(['email' => $user->getEmail()]);
                 if ($existingUser) {
@@ -66,6 +72,7 @@ class UserController extends AbstractController
             return $this->renderForm('user/userRegister.html.twig', [
 
                 'userForm' => $form,
+                'showPassword' => $showPassword,
             ]);
         }
     }
