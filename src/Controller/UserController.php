@@ -205,7 +205,7 @@ class UserController extends AbstractController
     // get users list 
     #[Route('/admin/users', name: 'app_users')]
     public function ListEvents(UserRepository $userRepository, SessionInterface $session)
-    {
+    {   // getting users
         $users = $userRepository->findAll();
         // the admins id
         $userId = $session->get('user')['idUser'];
@@ -232,7 +232,7 @@ class UserController extends AbstractController
 
 
     #[Route('/admin/users/edit/{id}', name: 'admin_edit_user')]
-    public function editUserAdmin(Request $request, User $user, $id)
+    public function editUserAdmin(Request $request, User $user, UserRepository $userRepository)
     {
         // Get the admin
         $session = $request->getSession();
@@ -249,16 +249,27 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // retrieve the updated user data from the form
             $user = $form->getData();
+            // search if email exists or not
+            $existingUser = $userRepository->findOneBy(['email' => $user->getEmail()]);
+            // error if the email already exists in the DB
+            if ($existingUser &&  ($existingUser->getIdUser() != $user->getIdUser())) {
+                $form->get('email')->addError(new FormError('Email Already exists'));
+            } else {
+                // Update  the user
 
+                // $user->setNom($request->request->get('user')['nom']);
+                // $user->setPrenom($request->request->get('user')['prenom']);
+                // $user->setEmail($request->request->get('user')['email']);
+                // $user->setMotDePasse($request->request->get('user')['motDePasse']);
+                // $user->setGenre($request->request->get('user')['genre']);
 
-            // Update the genre of the user
-            $user->setGenre($request->request->get('user')['genre']);
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->flush();
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_users', ['id' => $admin]);
+                return $this->redirectToRoute('app_users', ['id' => $admin]);
+            }
         }
 
         return $this->render('user/admin/adminUpdateUser.html.twig', [

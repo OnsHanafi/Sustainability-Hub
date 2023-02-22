@@ -5,34 +5,43 @@
 		<div class="card shadow-sm">
 			<div class="card-body">
 				<h2 class="card-title">Update User Infos</h2>
-				{# <p class="card-description">
-																					Modifier vos données
-																				</p> #}
-				{{ form_start(form) }}
+				{# <p class="card-description">Modifier vos données</p> #}
+				
 				<table class="table">
+				{{ form_start(form , {'attr':{"novalidate":"novalidate()"}}) }}
 					<tr>
 						<td>
 							<label for="exampleInputEmail1">Nom</label>
 						</td>
 						<td>{{ form_widget(form.nom, {'attr': {'value': user.nom}}) }}</td>
+						<td>
+							{% if form_errors(form.nom) %}
+								<div class="invalid-feedback">
+									{{ form_errors(form.nom) }}
+								</div>
+							{% endif %}
+						</td>
 					</tr>
 					<tr>
 						<td>
 							<label for="exampleInputEmail1">Prenom</label>
 						</td>
 						<td>{{ form_widget(form.prenom, {'attr': {'value': user.prenom}}) }}</td>
+						<td>{{ form_errors(form.prenom) }}</td>
 					</tr>
 					<tr>
 						<td>
 							<label for="exampleInputEmail1">Email</label>
 						</td>
 						<td>{{ form_widget(form.email, {'attr': {'value': user.email}}) }}</td>
+						<td>{{ form_errors(form.email) }}</td>
 					</tr>
 					<tr>
 						<td>
 							<label for="exampleInputEmail1">Password</label>
 						</td>
 						<td>{{ form_widget(form.motDePasse, {'attr': {'value': user.motDePasse}}) }}</td>
+						<td>{{ form_errors(form.motDePasse) }}</td>
 					</tr>
 					<tr>
 						<td>
@@ -41,16 +50,14 @@
 						<td>{{ form_widget(form.genre, {'attr': {'value': user.genre}}) }}</td>
 					</tr>
 				</table>
-				<div class="d-flex justify-content-center" style="
-						                        margin-top: 20px;
-						                        margin-left: 500px;
-						                    ">
+				<div class="d-flex justify-content-center" style="margin-top: 20px;margin-left: 500px;">
 					{{ form_widget(form.Register, {'attr': {'class': 'btn btn-success mr-2'}}) }}
 
 
 					{# <button href="{{ path('show_user',{'id': user.idUser})}}" class="btn btn-light">Cancel</button> #}
-					{{ form_end(form) }}
+
 				</div>
+				{{ form_end(form) }}
 			</div>
 
 		</div>
