@@ -5,29 +5,28 @@ namespace App\Controller;
 use App\Entity\Reponse;
 use App\Form\ReponseType;
 use App\Repository\ReponseRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/reponse")
- */
+
+#[Route('/reclamation/reponse')]
 class ReponseController extends AbstractController
 {
-    /**
-     * @Route("/", name="app_reponse_index", methods={"GET"})
-     */
-    public function index(ReponseRepository $reponseRepository): Response
-    {
-        return $this->render('reponse/index.html.twig', [
-            'reponses' => $reponseRepository->findAll(),
-        ]);
-    }
+    #[Route('/', name: 'app_reponse_index')]
+  
+            public function index()
+            {
+             return $this->redirectToRoute('app_ajoute');
+         }
+        
+    
 
-    /**
-     * @Route("/new", name="app_reponse_new", methods={"GET", "POST"})
-     */
+   
+
+    #[Route('/new', name: 'app_ajoute')]
     public function new(Request $request, ReponseRepository $reponseRepository): Response
     {
         $reponse = new Reponse();
@@ -37,7 +36,7 @@ class ReponseController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $reponseRepository->add($reponse, true);
 
-            return $this->redirectToRoute('app_reponse_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_affiche1');
         }
 
         return $this->renderForm('reponse/new.html.twig', [
@@ -46,45 +45,53 @@ class ReponseController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="app_reponse_show", methods={"GET"})
-     */
-    public function show(Reponse $reponse): Response
+    #[Route('/show', name: 'app_affiche')]
+    public function read2(ReponseRepository $ReponseRepository ):Response
     {
-        return $this->render('reponse/show.html.twig', [
-            'reponse' => $reponse,
-        ]);
+        $reponse=$ReponseRepository->findAll();
+        
+        return $this->render('reponse/index.html.twig',['reponses'=>$reponse]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="app_reponse_edit", methods={"GET", "POST"})
-     */
-    public function edit(Request $request, Reponse $reponse, ReponseRepository $reponseRepository): Response
+
+
+    #[Route('/showBack', name: 'app_affiche1')]
+    public function afficher(ReponseRepository $ReponseRepository ):Response
     {
-        $form = $this->createForm(ReponseType::class, $reponse);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $reponseRepository->add($reponse, true);
-
-            return $this->redirectToRoute('app_reponse_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->renderForm('reponse/edit.html.twig', [
-            'reponse' => $reponse,
-            'form' => $form,
-        ]);
+        $reponse=$ReponseRepository->findAll();
+        
+        return $this->render('reponse/index2.html.twig',['reponses'=>$reponse]);
     }
 
-    /**
-     * @Route("/{id}", name="app_reponse_delete", methods={"POST"})
-     */
-    public function delete(Request $request, Reponse $reponse, ReponseRepository $reponseRepository): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$reponse->getId(), $request->request->get('_token'))) {
-            $reponseRepository->remove($reponse, true);
-        }
 
-        return $this->redirectToRoute('app_reponse_index', [], Response::HTTP_SEE_OTHER);
+
+    #[Route('/update2/{id}', name: 'app_modif')]
+    
+    public function update(Request $request,ManagerRegistry $doctrine,Reponse $reponse)
+    {
+     //pour créer un formulaire
+     $form=$this->createForm(ReponseType::class,$reponse);
+     //traiter la requete reçu par le formulaire
+     $form->handleRequest($request);
+ if ($form->isSubmitted()&&($form->isValid()))
+ {$em=$doctrine->getManager();
+     $em->persist($reponse);
+ $em-> flush();
+ return $this->redirectToRoute('app_affiche');
+ }
+ 
+ return $this->render('reponse/edit.html.twig', ['form'=>$form->createView()]);
+ 
+    }
+
+    #[Route('/delete/{id}', name: 'app_supprime')]
+    
+    public function remove(ManagerRegistry $doctrine,$id,ReponseRepository $repo):Response
+    {
+$objSupp=$repo->find($id);
+$em=$doctrine->getManager();
+$em->remove($objSupp);
+$em->flush();
+return $this->redirectToRoute('app_affiche');
     }
 }

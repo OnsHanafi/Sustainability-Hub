@@ -1,0 +1,38 @@
+{% extends 'base2.html.twig' %}
+
+{% block title %}Reponse index{% endblock %}
+
+{% block body %}
+  <h1 class="mb-4">Réponses</h1>
+
+  <table class="table table-striped table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Description</th>
+        <th scope="col">Reclamation</th>
+        <th scope="col">Destination</th>
+        <th scope="col">Titre</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for reponse in reponses %}
+        <tr>
+          <td>{{ reponse.id }}</td>
+          <td>{{ reponse.Description }}</td>
+          <td>{{ reponse.reclamation }}</td>
+          <td>{{ reponse.destination }}</td>
+          <td>{{ reponse.titre }}</td>
+          
+          <td>
+            <a href="{{ path('app_supprime', {'id': reponse.id}) }}" class="btn btn-danger mr-2">Supprimer</a>
+            <a href="{{ path('app_modif', {'id': reponse.id}) }}" class="btn btn-primary">Modifier</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="{{ path('app_ajoute') }}" class="btn btn-success mt-4">Créer une nouvelle réponse</a>
+ {%endblock%}

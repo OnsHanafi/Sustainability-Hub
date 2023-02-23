@@ -12,10 +12,11 @@ class ReponseType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('contenu_reponse')
-            ->add('titre')
-            ->add('email_reponse')
+            ->add('Description')
+           
             ->add('reclamation')
+            ->add('destination')
+           ->add('titre')
         ;
     }
 

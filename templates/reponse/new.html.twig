@@ -1,11 +1,52 @@
-{% extends 'base.html.twig' %}
+{% extends 'base2.html.twig' %}
 
-{% block title %}New Reponse{% endblock %}
+{% block title %}Reponse{% endblock %}
+
 
 {% block body %}
-    <h1>Create new Reponse</h1>
+    <h1 class="text-center mb-5">Groots</h1>
 
-    {{ include('reponse/_form.html.twig') }}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Réponse</h5>
 
-    <a href="{{ path('app_reponse_index') }}">back to list</a>
+                        {{ form_start(form, {attr: {novalidate: ''}}) }}
+
+                            <div class="form-group">
+                                {{ form_label(form.Description) }}
+                                {{ form_widget(form.Description, {attr: {class: 'form-control'}}) }}
+                                {{ form_errors(form.Description, {attr: {'class': 'text-danger'}}) }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form_label(form.destination) }}
+                                {{ form_widget(form.destination, {attr: {class: 'form-control'}}) }}
+                                {{ form_errors(form.destination, {attr: {'class': 'text-danger'}}) }}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form_label(form.titre) }}
+                                {{ form_widget(form.titre, {attr: {class: 'form-control'}}) }}
+                                {{ form_errors(form.titre, {attr: {'class': 'text-danger'}}) }}
+                            </div>
+                             <div class="form-group">
+                                {{ form_label(form.reclamation) }}
+                                {{ form_widget(form.reclamation, {attr: {class: 'form-control'}}) }}
+                                {{ form_errors(form.reclamation, {attr: {'class': 'text-danger'}}) }}
+                            </div>                            
+
+                            <button type="submit" class="btn btn-primary btn-block">{{ button_label|default('Répondre ') }}</button>
+ 
+
+                        {{ form_end(form) }}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

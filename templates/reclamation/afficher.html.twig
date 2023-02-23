@@ -1,39 +1,38 @@
 {% extends 'base.html.twig' %}
-
-   {% endblock %}
-{% block title %}Reclamation{% endblock %}
-
 {% block body %}
-    <h1>Reclamation</h1>
+  <h1 class="mb-4">Reclamations</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ Reclamation.id }}</td>
-            </tr>
-            <tr>
-                <th>Contenu</th>
-                <td>{{ Reclamation.contenu }}</td>
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ Reclamation.nom }}</td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>{{ Reclamation.email }}</td>
-            </tr>
-            <tr>
-                <th>Prenom</th>
-                <td>{{ Reclamation.prenom }}</td>
-            </tr>
-        </tbody>
-    </table>
+  <table class="table table-striped table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Contenu</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Email</th>
+        <th scope="col">Prenom</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for reclamation in rec %}
+        <tr>
+          <td>{{ reclamation.id }}</td>
+          <td>{{ reclamation.contenu }}</td>
+          <td>{{ reclamation.nom }}</td>
+          <td>{{ reclamation.email }}</td>
+          <td>{{ reclamation.prenom }}</td>
+          <td>
+            <a href="{{ path('delete1', {'id': reclamation.id}) }}" class="btn btn-danger mr-2">Supprimer</a>
+            <a href="{{ path('update', {'id': reclamation.id}) }}" class="btn btn-primary">Modifier</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
-    <a href="{{ path('app_reclamation_index') }}">back to list</a>
+  <a href="{{ path('app_reclamation1') }}" class="btn btn-success mt-4">Créer une nouvelle réclamation</a>
+ 
+    
+    
 
-    <a href="{{ path('app_reclamation_edit', {'id': reclamation.id}) }}">edit</a>
-
-    {{ include('reclamation/_delete_form.html.twig') }}
 {% endblock %}

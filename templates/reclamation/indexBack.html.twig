@@ -2,37 +2,36 @@
 
 {% block title %}Reclamation {% endblock %}
 {% block body %}
-    <h1>Reclamation </h1>
+  <h1 class="mb-4">Reclamations</h1>
 
-    <table class="table">
+  <table id="myTable" class="table table-striped table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Contenu</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Email</th>
+        <th scope="col">Prenom</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for reclamation in rec %}
+        <tr>
+          <td>{{ reclamation.id }}</td>
+          <td>{{ reclamation.contenu }}</td>
+          <td>{{ reclamation.nom }}</td>
+          <td>{{ reclamation.email }}</td>
+          <td>{{ reclamation.prenom }}</td>
+          <td>
+            <a href="{{ path('delete1', {'id': reclamation.id}) }}" class="btn btn-danger mr-2">Supprimer</a>
+            <a href="{{ path('app_ajoute') }}" class="btn btn-primary">Répondre</a>
+            
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
   
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Contenu</th>
-                <th>Nom</th>
-                <th>Email</th>
-                <th>Prenom</th>
-                
-            </tr>
-        </thead>
-        <tbody>
-        {% for Reclamation in rec %}
-            <tr>
-                <td>{{ Reclamation.id }}</td>
-                <td>{{ Reclamation.contenu }}</td>
-                <td>{{ Reclamation.nom }}</td>
-                <td>{{ Reclamation.email }}</td>
-                <td>{{ Reclamation.prenom }}</td>
-                <td>
-                    <a href="{{ path('delete1', {'id': Reclamation.id}) }}">Supprimer</a>
-                   
-                </td>
-            </tr>
-      
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_reclamation1') }}">Create</a>
 {% endblock %}
