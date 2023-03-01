@@ -4,20 +4,95 @@
 {% endblock %}
 
 {% block body %}
-	{# {% for user in users %}
-									<tr>
-										<td>{{ user.nom }}</td>
-										<td>{{ user.prenom }}</td>
-										<td>{{ user.email }}</td>
-										<td>{{ user.genre }}</td>
-										<td>
-											<a href="{{ path('user_edit', {'id': user.idUser}) }}">Modify</a>
-											{% if loggedInUser.getGenre() == "admin" %}
-												<a href="{{ path('user_delete', {'id': user.idUser}) }}">Delete</a>
-											{% endif %}
-										</td>
-									</tr> #}
-	<div class="user-table-container">
+	{# search  #}
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<form id="search-form">
+		<div class="form-group">
+			<input type="text" name="searchTerm" class="form-control" placeholder="Search For Users...">
+		</div>
+		
+		<script>
+
+			 $('#search-form input[name="searchTerm"]').on('input', function () {
+            // Get the search term from the form
+			var messageElement = $('#search-message');
+            var searchTerm = $(this).val();
+            
+            // Check if searchTerm is empty
+            if (searchTerm < 1 ) {	
+                 $('#search-results-table').addClass('d-none');
+				  messageElement.text('');
+       			
+                return;
+            }else{
+				// Send Ajax request to search for users
+				$.ajax({
+					url: '{{ path('search_users') }}',
+					type: 'POST',
+					data: {
+							searchTerm: searchTerm
+							},
+					dataType: 'json',
+					success: function (response) { // Update search results
+							
+							$('#search-results').empty();
+
+							if (response.length > 0) {
+								$('#search-results-table').removeClass('d-none');
+								$.each(response, function (i, Otheruser) {
+									var row = $('<tr>');
+									row.append($('<td>').text(Otheruser.nom));
+									row.append($('<td>').text(Otheruser.prenom));
+									row.append($('<td>').text(Otheruser.email));
+									row.append($('<td>').text(Otheruser.genre));
+									$('#search-results').append(row);
+								});
+							messageElement.text('');
+							} else { 
+								// Hide search results table
+							$('#search-results-message').addClass('d-none');
+							$('#search-results-table').removeClass('d-none');
+							// messageElement.text('No users found.');
+							
+							
+							}
+						},
+					error: function (xhr) { // Handle error 
+					messageElement.text('Error: ' + xhr.responseText);
+					$('#search-results-table').addClass('d-none');
+					
+						}
+							});
+
+			}
+			
+		});
+					
+				
+        </script>
+    </form>
+
+    {# search results  #}
+	<div id="search-message"></div>
+    <div class="search-results-table d-none" id="search-results-table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Email</th>
+                    <th>Genre</th>
+                </tr>
+            </thead>
+            <tbody id="search-results"></tbody>
+        </table>
+    </div>
+	
+	
+	
+	{# users list #}
+
+	<div class="user-table-container ">
 		<table class="user-table">
 			<thead>
 				<tr>
@@ -28,25 +103,25 @@
 					<th>Actions</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody >
 				{% for Otheruser in users %}
-				{% if not (Otheruser.getGenre() == "admin") %}
-				
-					<tr>
-						<td>{{ Otheruser.nom }}</td>
-						<td>{{ Otheruser.prenom }}</td>
-						<td>{{ Otheruser.email }}</td>
-						<td>{{ Otheruser.genre }}</td>
-						<td>
-							<div class="actions">
-								{% if user.getGenre() == "admin"   %}
-									<a class="btn btn-primary" href="{{ path('admin_edit_user', {'id': Otheruser.idUser})}}">Edit</a>
+					{% if not (Otheruser.getGenre() == "admin") %}
 
-									<a class="btn btn-danger" href="{{ path('delete_user_Admin', {'id': Otheruser.idUser}) }}">Delete</a>
-								{% endif %}
-							</div>
-						</td>
-					</tr>
+						<tr  >
+							<td>{{ Otheruser.nom }}</td>
+							<td>{{ Otheruser.prenom }}</td>
+							<td>{{ Otheruser.email }}</td>
+							<td>{{ Otheruser.genre }}</td>
+							<td>
+								<div class="actions">
+									{% if user.getGenre() == "admin"   %}
+										<a class="btn btn-primary" href="{{ path('admin_edit_user', {'id': Otheruser.idUser})}}">Edit</a>
+
+										<a class="btn btn-danger" href="{{ path('delete_user_Admin', {'id': Otheruser.idUser}) }}">Delete</a>
+									{% endif %}
+								</div>
+							</td>
+						</tr>
 					{% endif %}
 				{% endfor %}
 			</tbody>
@@ -56,6 +131,3 @@
 	</div>
 
 {% endblock %}
-{# <a href=#>Modify</a>
-            {% if loggedInUser.getGenre() == "admin" %}
-                <a href=#>Delete</a> #}

@@ -13,11 +13,13 @@ use Doctrine\Persistence\ManagerRegistry;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class UserController extends AbstractController
 {
@@ -230,8 +232,9 @@ class UserController extends AbstractController
 
     // get users list 
     #[Route('/admin/users', name: 'app_users')]
-    public function ListEvents(UserRepository $userRepository, SessionInterface $session)
-    {   // getting users
+    public function ListUsers(UserRepository $userRepository, SessionInterface $session)
+    {
+        // getting users
         $users = $userRepository->findAll();
         // the admins id
         $userId = $session->get('user')['idUser'];
@@ -304,5 +307,39 @@ class UserController extends AbstractController
             'form' => $form->createView(),
             'user' => $user,
         ]);
+    }
+
+    // serch users 
+
+    #[Route("/admin/search-users", name: "search_users")]
+    public function searchUser(Request $request, UserRepository $userRepository)
+    {
+        $searchTerm = $request->request->get('searchTerm');
+        if ($searchTerm === null) {
+            return new Response("searchTerm parameter missing");
+        }
+
+        $users = $userRepository->findBySearchTerm($searchTerm);
+        $foundUsers = false;
+        if ($users == null) {
+            return new Response("no users found");
+        }
+        $response = [];
+
+        foreach ($users as $Otheruser) {
+            $foundUsers = true;
+            $response[] = [
+                'idUser' => $Otheruser->getIdUser(),
+                'nom' => $Otheruser->getNom(),
+                'prenom' => $Otheruser->getPrenom(),
+                'email' => $Otheruser->getEmail(),
+                'genre' => $Otheruser->getGenre(),
+            ];
+        }
+        if (!$foundUsers) {
+            return new JsonResponse("no users found");
+        } else {
+            return new JsonResponse($response);
+        }
     }
 }
