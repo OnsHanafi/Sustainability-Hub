@@ -39,12 +39,30 @@
 
 							if (response.length > 0) {
 								$('#search-results-table').removeClass('d-none');
+								
 								$.each(response, function (i, Otheruser) {
 									var row = $('<tr>');
 									row.append($('<td>').text(Otheruser.nom));
 									row.append($('<td>').text(Otheruser.prenom));
 									row.append($('<td>').text(Otheruser.email));
 									row.append($('<td>').text(Otheruser.genre));
+									//edit button
+									var editButton = $('<button>').addClass('btn btn-primary').text('Edit');
+            						editButton.click(function () {
+                					var editUrl = "{{ path('admin_edit_user', {'id': '__IDUSER__'}) }}";
+                					editUrl = editUrl.replace('__IDUSER__', Otheruser.idUser);
+                					window.location.href = editUrl;
+           							 });
+            						row.append($('<td>').append(editButton));
+									// delete button
+									var deleteButton = $('<button>').addClass('btn btn-danger').text('delete');
+            						deleteButton.click(function () {
+                					var deleteUrl = "{{ path('delete_user_Admin', {'id': '__IDUSER__'}) }}";
+                					deleteUrl = deleteUrl.replace('__IDUSER__', Otheruser.idUser);
+                					window.location.href = deleteUrl;
+           							 }); 
+            						row.append($('<td>').append(deleteButton));
+
 									$('#search-results').append(row);
 								});
 							messageElement.text('');
@@ -67,6 +85,8 @@
 			}
 			
 		});
+
+
 					
 				
         </script>
@@ -75,6 +95,7 @@
     {# search results  #}
 	<div id="search-message"></div>
     <div class="search-results-table d-none" id="search-results-table">
+	<h4>Searched Users List</h4>
         <table class="table">
             <thead>
                 <tr>
@@ -82,17 +103,23 @@
                     <th>Prénom</th>
                     <th>Email</th>
                     <th>Genre</th>
+					
                 </tr>
             </thead>
             <tbody id="search-results"></tbody>
         </table>
+		</br>
+		</br>
+		</br>
+		</br>
     </div>
 	
 	
 	
 	{# users list #}
 
-	<div class="user-table-container ">
+	<div class="user-table-container">
+	<h4>Users List</h4>
 		<table class="user-table">
 			<thead>
 				<tr>
