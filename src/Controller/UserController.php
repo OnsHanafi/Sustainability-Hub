@@ -17,38 +17,34 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json');
 
 class UserController extends AbstractController
 {
     #[Route('/homeUser ', name: 'app_home_user')]
-    public function homeUser(): Response
+    public function homeUser()
     {
         return $this->render('baseFront.html.twig', []);
     }
 
     #[Route('/homeAdmin ', name: 'app_home_admin')]
-    public function homeAdmin(): Response
+    public function homeAdmin()
     {
         return $this->render('baseBack.html.twig', []);
     }
 
 
-    // #[Route('/user', name: 'app_user')]
-    // public function index(): Response
-    // {
-    //     return $this->render('user/index.html.twig', [
-    //         'controller_name' => 'UserController',
-    //     ]);
-    // }
-
-
-
     //add user 
     #[Route('/create_user', name: 'create_user')]
-    public function createUser(Request $request, UserRepository $userRepository, ManagerRegistry $doctrine)
+    public function createUser(Request $request, UserRepository $userRepository, ManagerRegistry $doctrine, MailerInterface $mailer)
     { {
             $user = new User();
             $form = $this->createForm(UserType::class, $user);
@@ -65,9 +61,27 @@ class UserController extends AbstractController
                 if ($existingUser) {
                     $form->get('email')->addError(new FormError('Email Already exists , Change it !!'));
                 } else {
+                    // Generate verification token and save to user entity
+                    $token = bin2hex(random_bytes(32));
+                    $user->setVerificationToken($token);
+
+                    //persist user 
                     $entityManager = $doctrine->getManager();
                     $entityManager->persist($user);
                     $entityManager->flush();
+
+
+                    // Send verification email to user
+                    $email = (new Email())
+                        ->from('Sustainability-Hub@esprit.tn')
+                        ->to($user->getEmail())
+                        ->subject('Welcome to SustainabilityHub!')
+                        ->html($this->renderView('verificationEmail.html.twig', [
+                            'user' => $user,
+                            'verificationLink' => $this->generateUrl('verify_email', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL),
+                        ]));
+                    $mailer->send($email);
+
                     return $this->redirectToRoute('app_login');
                 }
             }
@@ -78,6 +92,28 @@ class UserController extends AbstractController
             ]);
         }
     }
+
+    #[Route('/verify_email/{token}', name: 'verify_email')]
+    public function verifyEmail(UserRepository $userRepository, string $token)
+    {
+        $user = $userRepository->findOneBy(['verificationToken' => $token]);
+
+        if (!$user) {
+            throw $this->createNotFoundException('Invalid verification token');
+        }
+
+        // $user->setVerificationToken('null');
+        $user->setIsVerified(true);
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_login');
+    }
+
+
+
 
     //login
     #[Route('/login', name: 'app_login')]
@@ -102,6 +138,8 @@ class UserController extends AbstractController
                 // wrong password
             } elseif ($user->getMotDePasse() != $existingUser->getMotDePasse()) {
                 $form->get('motDePasse')->addError(new FormError('Incorrect password'));
+            } elseif (!($existingUser->isIsVerified())) {
+                    $form->get('email')->addError(new FormError('Account not verified. Please check your email for verification instructions.'));
                 // everything is wright !!
             } else if ($user->getMotDePasse() == $existingUser->getMotDePasse()) {
                 // Set user attributes in session

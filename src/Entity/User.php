@@ -11,7 +11,7 @@ class User
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    
+
     private ?int $idUser = null;
 
     #[ORM\Column(length: 255)]
@@ -23,11 +23,17 @@ class User
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(name: "motDePasse", length: 255)]
     private ?string $motDePasse = null;
 
     #[ORM\Column(length: 255)]
     private ?string $genre = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $verificationToken = null;
+
+    #[ORM\Column]
+    private ?bool $isVerified = false;
 
     // public function getId(): ?int
     // {
@@ -102,6 +108,30 @@ class User
     public function setGenre(string $genre): self
     {
         $this->genre = $genre;
+
+        return $this;
+    }
+
+    public function getVerificationToken(): ?string
+    {
+        return $this->verificationToken;
+    }
+
+    public function setVerificationToken(string $verificationToken): self
+    {
+        $this->verificationToken = $verificationToken;
+
+        return $this;
+    }
+
+    public function isIsVerified(): ?bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): self
+    {
+        $this->isVerified = $isVerified;
 
         return $this;
     }
