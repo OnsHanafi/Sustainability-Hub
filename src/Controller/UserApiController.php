@@ -24,13 +24,14 @@ class UserApiController extends AbstractController
         $email = $request->query->get("email");
         $motDePasse = $request->query->get("motDePasse");
         $genre = $request->query->get("genre");
-
+        $verification_token = bin2hex(random_bytes(32));
         // controle de saisie email
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return new response("invalid email ");
         }
         // set the user 
         $user = new User();
+        $user->setVerificationToken($verification_token);
         $user->setNom($nom);
         $user->setPrenom($prenom);
         $user->setEmail($email);
@@ -44,10 +45,10 @@ class UserApiController extends AbstractController
             $entityManager->flush();
 
             //json response
-            return new JsonResponse(" Account created successfully ", 200);
+            return new JsonResponse("Account created successfully", Response::HTTP_OK);
         } catch (\Exception $ex) {
             //if exception
-            return new JsonResponse("exception", $ex->getMessage());
+            return new JsonResponse(["message" => "exception", "error" => $ex->getMessage()], 500);
         }
     }
 
