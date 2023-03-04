@@ -24,8 +24,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
-header('Access-Control-Allow-Origin: *');
-header('Content-Type: application/json');
+
 
 class UserController extends AbstractController
 {
@@ -49,6 +48,7 @@ class UserController extends AbstractController
             $user = new User();
             $form = $this->createForm(UserType::class, $user);
             $form->handleRequest($request);
+            $logo = 'public/logoSH.png';
 
             //show password 
             $showPassword = false;
@@ -77,6 +77,7 @@ class UserController extends AbstractController
                         ->to($user->getEmail())
                         ->subject('Welcome to SustainabilityHub!')
                         ->html($this->renderView('verificationEmail.html.twig', [
+                            'logo' => $logo,
                             'user' => $user,
                             'verificationLink' => $this->generateUrl('verify_email', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL),
                         ]));
@@ -85,6 +86,9 @@ class UserController extends AbstractController
                     return $this->redirectToRoute('app_login');
                 }
             }
+
+
+
             return $this->renderForm('user/userRegister.html.twig', [
 
                 'userForm' => $form,
@@ -139,7 +143,7 @@ class UserController extends AbstractController
             } elseif ($user->getMotDePasse() != $existingUser->getMotDePasse()) {
                 $form->get('motDePasse')->addError(new FormError('Incorrect password'));
             } elseif (!($existingUser->isIsVerified())) {
-                    $form->get('email')->addError(new FormError('Account not verified. Please check your email for verification instructions.'));
+                $form->get('email')->addError(new FormError('Account not verified. Please check your email for verification instructions.'));
                 // everything is wright !!
             } else if ($user->getMotDePasse() == $existingUser->getMotDePasse()) {
                 // Set user attributes in session

@@ -1,7 +1,17 @@
-{% block subject %}Welcome to our site!{% endblock %}
+{% block subject %}Welcome to our site!
+{% endblock %}
 
 {% block body %}
-    <h1>Welcome {{ user.nom }} {{ user.prenom }} !</h1>
-    <p>Please verify your email address by clicking the following link:</p>
-    <p><a href="{{ verificationLink }}">{{ verificationLink }}</a></p>
+
+	<h1>
+		Welcome
+		{{ user.nom }}
+		{{ user.prenom }}!
+	</h1>
+	<p>Please verify your email address by clicking the following link:
+	</p>
+	<p>
+		<a href="{{ verificationLink }}">
+			{{ verificationLink }}</a>
+	</p>
 {% endblock %}
