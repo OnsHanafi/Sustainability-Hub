@@ -53,27 +53,11 @@
 							{{ form_end(loginForm) }}
 
 						</form>
+						<div style="margin-top: 20px;"><a  class="btn btn-outline-info" style="border: aliceblue;" href="forgotPassword" >Forgot password ?</a><div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</section>
-	{# <h1>
-										Login
-										</h1> #}
-{# 
-		{% if app.session.flashbag.peek('error') is defined %}
-			<div class="alert alert-danger"> {{ app.session.flashbag.get('error') }}</div>
-	{% endif %} #}
 
-	{# {{ form_start(loginForm) }}
-									
-										{{ form_label(loginForm.email) }}
-										{{ form_widget(loginForm.email) }}
-									
-										{{ form_label(loginForm.mot_de_passe) }}
-										{{ form_widget(loginForm.mot_de_passe) }}<button type="submit">
-											Login</button>
-									
-										{{ form_end(loginForm) }} #}
 {% endblock %}

@@ -3,14 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\ForgotPasswordType;
 use App\Form\LoginType;
+use App\Form\ResetPasswordType;
 use App\Form\UpdateUserType;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -164,6 +166,86 @@ class UserController extends AbstractController
             'showPassword' => $showPassword,
         ]);
     }
+
+    // forgot password 
+    #[Route('/forgotPassword', name: 'app_forgot_password')]
+    public function forgotPassword(Request $request, UserRepository $userRepository, MailerInterface $mailer): Response
+    {
+        $form = $this->createForm(ForgotPasswordType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $formEmail = $form->getData();
+            $user = $userRepository->findOneBy(['email' => $formEmail->getEmail()]);
+
+            if ($user) {
+                //change the Token  for reset password
+                $token = uniqid();
+                $user->setVerificationToken($token);
+                // persist in db
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($user);
+                $entityManager->flush();
+                // email
+                $email = (new TemplatedEmail())
+                    ->from('Sustainability-Hub@esprit.tn')
+                    ->to($user->getEmail())
+                    ->subject('Reset your password')
+                    ->htmlTemplate('user/reset_password_email.html.twig')
+                    ->context([
+                        // 'token' => $token,
+                        'user' => $user,
+                        'resetLink' => $this->generateUrl('app_reset_password', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL),
+                    ]);
+
+                $mailer->send($email);
+
+                $this->addFlash('success', 'An email has been sent to you with instructions on how to reset your password.');
+                return $this->redirectToRoute('app_login');
+            } else {
+                $form->get('email')->addError(new FormError('This email address does not exist in our records.'));
+            }
+        }
+
+        return $this->render('user/forgot_password.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    //Reset password 
+    #[Route('/resetPassword/{token}', name: 'app_reset_password')]
+    public function resetPassword(Request $request, UserRepository $userRepository, string $token, UserPasswordEncoderInterface $passwordEncoder): Response
+    {
+        $user = $userRepository->findOneBy(['verificationToken' => $token]);
+
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
+
+        $form = $this->createForm(ResetPasswordType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            //get the password from the form 
+            $formPassword = $form->getData();
+            $password = $formPassword->getMotDePasse();
+            // set the new password 
+            // $user->setVerificationToken(null);
+            $user->setMotDePasse($password);
+            // persist the user in the db
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Your password has been reset. You can now log in with your new password.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        return $this->render('user/reset_password.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
 
 
 
