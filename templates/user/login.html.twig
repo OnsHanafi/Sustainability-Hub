@@ -5,6 +5,16 @@
 
 {% block body %}
 	<!-- login section -->
+	{% for type, messages in app.session.flashbag.all() %}
+		{% for message in messages %}
+			<div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+				{{ message }}
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+		{% endfor %}
+	{% endfor %}
 
 	<section class="login_section layout_padding">
 		<div class="container">
@@ -33,31 +43,34 @@
 								{{ form_errors(loginForm.email) }}
 							</div>
 							<div style="display: flex; ">
-							<div style="float: left;  width:500px; ">
-								{{ form_widget(loginForm.motDePasse, {'attr': {'placeholder': 'Password'}, 'type': showPassword ? 'text' : 'password' , 'id':'loginForm_motDePasse'}) }}
-								{{ form_errors(loginForm.motDePasse) }}
-							</div>
-							<div style="float: right; width:10%; height :20px;" ><input type="checkbox" id="showPassword" name="showPassword" onclick="togglePassword()" style="height: 30px;margin-top: 15px;">
-								
-								<script>
-									function togglePassword() {
-										var passwordField = document.getElementById("loginForm_motDePasse");
-										var showPassword = document.getElementById("showPassword");
-										if (showPassword.checked) {
-										passwordField.type = "text";
-										} else {
-										passwordField.type = "password";
-										}
-										}</script></div>
+								<div style="float: left;  width:500px; ">
+									{{ form_widget(loginForm.motDePasse, {'attr': {'placeholder': 'Password'}, 'type': showPassword ? 'text' : 'password' , 'id':'loginForm_motDePasse'}) }}
+									{{ form_errors(loginForm.motDePasse) }}
+								</div>
+								<div style="float: right; width:10%; height :20px;"><input type="checkbox" id="showPassword" name="showPassword" onclick="togglePassword()" style="height: 30px;margin-top: 15px;">
+
+									<script>
+										function togglePassword() {
+var passwordField = document.getElementById("loginForm_motDePasse");
+var showPassword = document.getElementById("showPassword");
+if (showPassword.checked) {
+passwordField.type = "text";
+} else {
+passwordField.type = "password";
+}
+}
+									</script>
+								</div>
 							</div>
 							{{ form_end(loginForm) }}
 
 						</form>
-						<div style="margin-top: 20px;"><a  class="btn btn-outline-info" style="border: aliceblue;" href="forgotPassword" >Forgot password ?</a><div>
+						<div style="margin-top: 20px;">
+							<a class="btn btn-outline-info" style="border: aliceblue;" href="forgotPassword">Forgot password ?</a>
+							<div></div>
+						</div>
 					</div>
 				</div>
-			</div>
-		</div>
-	</section>
+			</section>
 
-{% endblock %}
+		{% endblock %}
