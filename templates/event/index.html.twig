@@ -30,7 +30,8 @@
                     <td>{{ event.description }}</td>
                     <td>{{ event.getDate()|date('m/d/Y') }}</td>
                     <td>{{ event.location }}</td>
-                    <td><img src="{{ ('uploads/'~event.image) }}" style=" width:60px; height:50px; " alt=""/></td>
+{#                    <td><img src="{{ ('uploads/'~event.image) }}" style=" width:60px; height:50px; " alt=""/></td>#}
+                    <td>  <img src="{{ asset('uploads/' ~ event.image) }}" style=" width:60px; height:50px; alt:"{{ event.image }}" > </td>
 
                     <td>
                         <a href="{{ path('modifier', {id: event.id}) }}" class="btn btn-primary">Edit</a>

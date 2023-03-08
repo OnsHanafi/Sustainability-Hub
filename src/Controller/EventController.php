@@ -5,12 +5,23 @@ namespace App\Controller;
 use App\Entity\Events;
 use App\Form\EventType;
 use App\Repository\EventsRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use phpDocumentor\Reflection\DocBlock\Description;
+use phpDocumentor\Reflection\Types\This;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Constraints\DateTime;
+
 
 
 class EventController extends AbstractController
@@ -23,6 +34,10 @@ class EventController extends AbstractController
         $events=$repository->findAll();
         return $this->render('front/frontlist.html.twig',['events'=>$events]);
     }
+
+
+
+
 
     // list backadmin :
     #[Route('/event/list', name: 'event_list_back')]
@@ -46,6 +61,9 @@ class EventController extends AbstractController
                 $filename = md5(uniqid()) . '.' . $file->guessExtension();
                 $file->move($this->getParameter('uploads'), $filename);
                 $event->setImage($filename); // set image value to $event, not $form->getData()
+            } else {
+                // Set default image filename here
+                $event->setImage('default.jpg');
             }
 
 
@@ -110,5 +128,136 @@ class EventController extends AbstractController
         return $this->redirectToRoute('event_list_back');
 
     }
+
+    //-----------------------------------PDF:-------------------------------------------
+    #[Route('/events/pdf', name: 'event_pdf')]
+    public function pdf(EventsRepository $eventsRepository): Response
+    {
+        // Configuration de dompdf
+        $pdfOptions= new Options();
+        $pdfOptions->set('defaultFont','Arial');
+
+        // initialisation pdf
+        $dompdf=new Dompdf($pdfOptions);
+
+        //retreive the events data from the database
+        $events = $eventsRepository->findAll();
+
+        //render the eventst from the database
+        $html=$this->renderView('front/pdf.html.twig',[
+                     'events' => $events,
+    ]);
+       //load html
+        $dompdf->loadHtml($html);
+
+        //setup the paper format
+        $dompdf->setPaper('A4','Portrait');
+
+        //render pdf as html content
+        $dompdf->render();
+
+
+        //save pdf as listeevenements pdf
+        $dompdf->stream("listedesevenements.pdf");
+
+        //output to browser
+        return new Response('',200,[
+            'Content-Type' => 'applcation/pdf',
+        ]);
+
+    }
+   //-----------------------------------  Trie par date ordre desc:-------------------------------------------
+
+    #[Route('/events/tridesc', name: 'event_order_by_date_desc')]
+    public function orderEventsByDateDesc(EventsRepository $eventsRepository): Response
+    {
+        $events = $eventsRepository->orderEventsByDateDesc();
+
+        return $this->render('front/frontlist.html.twig', [
+            'events' => $events,
+        ]);
+    }
+
+    //-----------------------------------  Trie par date ordre ASC:-------------------------------------------
+
+    #[Route('/events/triasc', name: 'event_order_by_date_asc')]
+    public function orderEventsByDateASC(EventsRepository $eventsRepository): Response
+    {
+        $eventsasc = $eventsRepository->orderEventsByDateAsc();
+
+        return $this->render('front/frontlist.html.twig', [
+            'events' => $eventsasc,
+        ]);
+    }
+
+
+
+
+
+
+
+    //-----------------------------------Json:-------------------------------------------
+    //FRONT Liste event:
+
+    #[Route('/frontjson', name: 'event_list_json')]
+    public function ListEventsjson(EventsRepository $repository,SerializerInterface $SerializerInterface ): Response
+    {
+        $events=$repository->findAll();
+        $json = $SerializerInterface->serialize($events, 'json', ['groups' => 'event']);
+
+        return new JsonResponse($json, 200, [], true);
+    }
+
+
+    //ADD event json :
+    #[Route('/addjson', name: 'event_add_json')]
+    public function addEventjson(Request $request, ManagerRegistry $doctrine, SerializerInterface $serializer, EntityManagerInterface $em)
+    {
+        $events = new Events();
+
+        $title = $request->query->get("title");
+        $description = $request->query->get("description");
+        $date = $request->query->get("date");
+        $location = $request->query->get("location");
+        $image= $request->query->get("image");
+
+
+        if ($title !== null) {
+            $events->setTitle($title);
+        }
+        if ($description !== null) {
+            $events->setDescription($description);
+        }
+
+        if ($date !== null) {
+            $events->setDate(new \DateTime($date));
+        }
+
+        if ($location !== null) {
+            $events->setLocation($location);
+        }
+        if ($image !== null) {
+            $events->setImage($image);
+        }
+
+        $em->persist($events);
+        $em->flush();
+
+        $formatted = $serializer->normalize($events, null, ['groups' => 'event']);
+        return new JsonResponse($formatted);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

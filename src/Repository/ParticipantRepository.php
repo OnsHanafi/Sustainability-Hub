@@ -39,6 +39,22 @@ class ParticipantRepository extends ServiceEntityRepository
         }
     }
 
+//        public function searchParticipants(string $searchText): array
+//        {
+//            $qb = $this->createQueryBuilder('p');
+//            $qb->andWhere(
+//                $qb->expr()->orX(
+//                 $qb->expr()->like('p.name', ':searchText'),
+//                   $qb->expr()->like('p.phone_number', ':searchText'),
+//              $qb->expr()->like('p.email', ':searchText'),
+//                  $qb->expr()->like('p.title', ':searchText')
+//                )
+//            )
+//                ->setParameter('searchText', '%' . $searchText . '%');
+//
+//            return $qb->getQuery()->getResult();
+//        }
+
 //    /**
 //     * @return Participant[] Returns an array of Participant objects
 //     */
