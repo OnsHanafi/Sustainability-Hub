@@ -1,0 +1,225 @@
+
+
+{% extends 'baseBack.html.twig' %}
+
+{% block title %}Service!{% endblock %}
+{%block language%}
+<div id="google_translate_element">
+
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+        }
+    </script>
+
+
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+
+
+</div>
+{%endblock%}
+
+
+
+
+   {%block recherche%}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<form id="search-form">
+		<div class="form-group">
+			<input type="text" name="searchTerm" class="form-control" placeholder="Write Here ">
+		</div>
+		
+		<script>
+
+			 $('#search-form input[name="searchTerm"]').on('input', function () {
+            // Get the search term from the form
+			var messageElement = $('#search-message');
+            var searchTerm = $(this).val();
+            
+            // Check if searchTerm is empty
+            if (searchTerm < 1 ) {	
+                 $('#search-results-table').addClass('d-none');
+				  messageElement.text('');
+       			
+                return;
+            }else{
+				// Send Ajax request to search for users
+				$.ajax({
+					url: '{{ path('searchService') }}',
+					type: 'POST',
+					data: {
+							searchTerm: searchTerm
+							},
+					dataType: 'json',
+					success: function (response) { // Update search results
+							
+							$('#search-results').empty();
+
+							if (response.length > 0) {
+								$('#search-results-table').removeClass('d-none');
+								
+								$.each(response, function (i, Otherec) {
+									var row = $('<tr>');
+									row.append($('<td>').text(Otherec.id));
+									row.append($('<td>').text(Otherec.image));
+									row.append($('<td>').text(Otherec.nom));
+									row.append($('<td>').text(Otherec.localisation);
+row.append($('<td>').text(Otherec.description);
+row.append($('<td>').text(Otherec.category);
+									//edit button
+									var editButton = $('<button>').addClass('btn btn-primary').text('Modifier');
+            						editButton.click(function () {
+                					var editUrl = "{{ path('update_service', {'id': '_IDREC_'}) }}";
+                					editUrl = editUrl.replace('_IDUSER_', Otherec.id);
+                					window.location.href = editUrl;
+           							 });
+            						row.append($('<td>').append(editButton));
+									// delete button
+									var deleteButton = $('<button>').addClass('btn btn-danger').text('Supprimer');
+            						deleteButton.click(function () {
+                					var deleteUrl = "{{ path('delete_service', {'id': '_IDREC_'}) }}";
+                					deleteUrl = deleteUrl.replace('_IDUSER_', Otherec.id);
+                					window.location.href = deleteUrl;
+           							 }); 
+            						row.append($('<td>').append(deleteButton));
+
+									$('#search-results').append(row);
+								});
+							messageElement.text('');
+							} else { 
+								// Hide search results table
+							$('#search-results-message').addClass('d-none');
+							$('#search-results-table').removeClass('d-none');
+							// messageElement.text('No users found.');
+							
+							
+							}
+						},
+					error: function (xhr) { // Handle error 
+					messageElement.text('Error: ' + xhr.responseText);
+					$('#search-results-table').addClass('d-none');
+					
+						}
+							});
+
+			}
+			
+		});
+
+
+					
+				
+        </script>
+    </form>
+
+    {# search results  #}
+	<div id="search-message" style="color:red;" ></div>
+    <div class="search-results-table d-none" id="search-results-table">
+	<h4 style="color:blue;">Service's List</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+<th>Image</th>
+                    <th>Nom</th>
+                    <th>Categorie</th>
+                    <th>Localisation</th>
+					
+                </tr>
+            </thead>
+            <tbody id="search-results"></tbody>
+        </table>
+		</br>
+		</br>
+		</br>
+		</br>
+    </div>
+
+{% endblock %}
+
+
+{% block body %}
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Service Table</h4>
+                <a href="{{ path('create_service') }}">
+                    <button type="button" class="btn btn-success">Add Service</button>
+                </a>
+                <a class="btn btn-primary" href="{{ path('mapM') }}">Google Maps</a>
+                <a class="btn btn-primary" href="{{ path('stats') }}">Statistique</a>
+
+               
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Image</th>
+                                <th>Nom</th>
+                                <th>Description</th>
+                                <th>Localisation</th>
+                                <th>Catégorie</th>
+                                 <th>Likes</th>
+                                  <th>DisLikes</th>
+                                <th>Supprimer</th>
+                                <th>Modifier</th>
+                                
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for serv in service %}
+                                <tr>
+                                    <td>{{ serv.getId() }}</td>
+                                    <td>
+                                        <img src="{{ 'uploads/' ~ serv.image }}" 
+                                            style="width:60px; height:50px;" 
+                                            class="rounded shadow"
+                                            alt=""
+                                        />
+                                    </td>
+                                    <td>{{ serv.getNom() }}</td>
+                                    <td>{{ serv.getDescription() }}</td>
+                                    <td>{{ serv.getLocalisation() }}</td>
+                                    <td>{{ serv.getCategory() }}</td>
+                                     <td>{{ serv.getLikes() }}</td>
+                                      <td>{{ serv.getDislikes() }}</td>
+                                    <td>
+                                        <a href="{{ path('delete_service', {'id': serv.getId()}) }}"
+                                           class="btn btn-danger">
+                                            Supprimer
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{{ path('update_service', {'id': serv.getId()}) }}"
+                                     
+                                           class="btn btn-primary">
+                                            Modifier
+                                        </a>
+                                    </td>
+                                       <!-!!!!!!!!!!!!!!!!!!!!!!!-->
+
+                                
+    
+     
+       
+           
+        
+
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {{ knp_pagination_render(service) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+
+
