@@ -17,16 +17,24 @@ class Reclamation
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    // #[Assert\Length(min = 10,max = 100, minMessage = "Le contenu doit comporter au moins {{ limit }} caractères.")]
+    #[Assert\Length(
+        min: 10,
+        max: 100,
+        minMessage: 'Your first name must be at least {{ limit }} characters long',
+        maxMessage: 'Your first name cannot be longer than {{ limit }} characters',
+    )]
     private ?string $contenu = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Nom should not be blank")]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Email(message: 'The email {{ value }} is not a valid email.')]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Prenom should not be blank")]
     private ?string $prenom = null;
 
     #[ORM\OneToMany(mappedBy: 'reclamation', targetEntity: Reponse::class)]
@@ -47,7 +55,7 @@ class Reclamation
         return $this->contenu;
     }
 
-    public function setContenu(string $contenu): self
+    public function setContenu(?string $contenu): self
     {
         $this->contenu = $contenu;
 
@@ -59,7 +67,7 @@ class Reclamation
         return $this->nom;
     }
 
-    public function setNom(string $nom): self
+    public function setNom(?string $nom): self
     {
         $this->nom = $nom;
 
@@ -71,7 +79,7 @@ class Reclamation
         return $this->email;
     }
 
-    public function setEmail(string $email): self
+    public function setEmail(?string $email): self
     {
         $this->email = $email;
 
@@ -83,7 +91,7 @@ class Reclamation
         return $this->prenom;
     }
 
-    public function setPrenom(string $prenom): self
+    public function setPrenom(?string $prenom): self
     {
         $this->prenom = $prenom;
 
@@ -119,4 +127,8 @@ class Reclamation
 
         return $this;
     }
+    public function __toString()
+{
+    return $this->id;
+}
 }

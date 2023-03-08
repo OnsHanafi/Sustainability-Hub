@@ -26,32 +26,32 @@ class ReponseController extends AbstractController
 
    
 
-    #[Route('/new/{id}', name: 'app_ajoute')]
-    public function new(Request $request, ReponseRepository $reponseRepository,ManagerRegistry $doctrine,$id): Response
-    {
-        $reponse = new Reponse();
-        $form = $this->createForm(ReponseType::class, $reponse);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $reponseRepository->add($reponse, true);
-            $reponse = new Reponse();
-            $reponse = $reponseRepository->find($id);
-            // $reclamation->setEtat(1 );
-            $em = $doctrine->getManager();
-            $em->flush();
-            $reponseRepository->sms();
-            $this->addFlash('danger', 'reponse envoyée avec succées');
-            return $this->redirectToRoute('app_affiche1');
-            
-        }
-
-        return $this->renderForm('reponse/new.html.twig', [
-            'reponse' => $reponse,
-            'form' => $form
-            //'reponses'=>$reponse
-        ]);
-    }
+         #[Route('/new/{id}', name: 'app_ajoute')]
+         public function new(Request $request, ReponseRepository $reponseRepository,ManagerRegistry $doctrine,$id): Response
+         {
+             $reponse = new Reponse();
+             $form = $this->createForm(ReponseType::class, $reponse);
+             $form->handleRequest($request);
+     
+             if ($form->isSubmitted() && $form->isValid()) {
+                 $reponseRepository->add($reponse, true);
+                 $reponse = new Reponse();
+                 $reponse = $reponseRepository->find($id);
+                 // $reclamation->setEtat(1 );
+                 $em = $doctrine->getManager();
+                 $em->flush();
+                 $reponseRepository->sms();
+                 $this->addFlash('danger', 'reponse envoyée avec succées');
+                 return $this->redirectToRoute('app_affiche1');
+                 
+             }
+     
+             return $this->renderForm('reponse/new.html.twig', [
+                 'reponse' => $reponse,
+                 'form' => $form
+                 //'reponses'=>$reponse
+             ]);
+         }
 
     #[Route('/show', name: 'app_affiche')]
     public function read2(ReponseRepository $ReponseRepository ):Response
