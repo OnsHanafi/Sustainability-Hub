@@ -55,7 +55,7 @@ class UserApiController extends AbstractController
                 ->from('Sustainability-Hub@esprit.tn')
                 ->to($user->getEmail())
                 ->subject('Welcome to SustainabilityHub!')
-                ->html($this->renderView('ApiVerifyEmail.html.twig', [
+                ->html($this->renderView('user_api/ApiVerifyEmail.html.twig', [
                     'user' => $user,
                     'verificationLink' => $this->generateUrl('verify_email_api', ['token' => $verification_token], UrlGeneratorInterface::ABSOLUTE_URL),
                 ]));

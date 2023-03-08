@@ -78,7 +78,7 @@ class UserController extends AbstractController
                         ->from('Sustainability-Hub@esprit.tn')
                         ->to($user->getEmail())
                         ->subject('Welcome to SustainabilityHub!')
-                        ->html($this->renderView('verificationEmail.html.twig', [
+                        ->html($this->renderView('user/verificationEmail.html.twig', [
                             'logo' => $logo,
                             'user' => $user,
                             'verificationLink' => $this->generateUrl('verify_email', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL),
