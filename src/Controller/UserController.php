@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\AdminUpdateUserType;
 use App\Form\ForgotPasswordType;
 use App\Form\LoginType;
 use App\Form\ResetPasswordType;
@@ -386,7 +387,7 @@ class UserController extends AbstractController
 
 
 
-
+    /// admin update user
     #[Route('/admin/users/edit/{id}', name: 'admin_edit_user')]
     public function editUserAdmin(Request $request, User $user, UserRepository $userRepository)
     {
@@ -401,7 +402,7 @@ class UserController extends AbstractController
             throw new \Exception('Admin user not found in session');
         }
 
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(AdminUpdateUserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
