@@ -178,6 +178,7 @@ class UserController extends AbstractController
             $formEmail = $form->getData();
             $user = $userRepository->findOneBy(['email' => $formEmail->getEmail()]);
 
+
             if ($user) {
                 //change the Token  for reset password
                 $token = uniqid();
@@ -203,7 +204,7 @@ class UserController extends AbstractController
                 $this->addFlash('success', 'An email has been sent to you with instructions on how to reset your password.');
                 return $this->redirectToRoute('app_login');
             } else {
-                $form->get('email')->addError(new FormError('This email address does not exist in our records.'));
+                $form->get('email')->addError(new FormError('This email doesn`t exist'));
             }
         }
 
