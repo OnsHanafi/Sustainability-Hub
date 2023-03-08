@@ -467,4 +467,25 @@ class UserController extends AbstractController
             return new JsonResponse($response);
         }
     }
+
+    // Satistics users 
+
+    #[Route("/admin/userStats", name: "user_stats")]
+    public function userStats(Request $request, UserRepository $userRepository)
+    {
+        // Get the admin
+        $session = $request->getSession();
+
+        // Get the admin user from the session
+        $admin = $session->get('user');
+
+        $simpleUserCount = $userRepository->count(['genre' => 'user']);
+        $formateurCount = $userRepository->count(['genre' => 'formateur']);
+
+        return $this->render('user/admin/userStats.html.twig', [
+            "simpleUserCount" => $simpleUserCount,
+            "formateurCount" => $formateurCount,
+            "user" => $admin,
+        ]);
+    }
 }

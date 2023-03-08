@@ -1,0 +1,67 @@
+{% extends 'baseBack.html.twig' %}
+
+{% block body %}
+    <canvas id="userCountChart"  ></canvas>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+    <script>
+        var ctx = document.getElementById('userCountChart').getContext('2d');
+        var userCountChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Users', 'Formateurs'],
+                datasets: [{
+                    label: 'UsersCount',
+                    data: [
+                        {{ simpleUserCount }},
+                        0
+                    ],
+                    backgroundColor: [
+                       'rgba(255, 99, 132, 0.2)',
+                       'rgba(255, 99, 132, 0.2)',
+                        
+                       
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        
+                       
+                    ],
+                    borderWidth: 1
+                },
+                {
+                    label: 'FormateursCount',
+                    data: [
+                        0,
+                        {{ formateurCount }}
+                    ],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                      
+                        
+                         
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        
+                        
+                        
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+{% endblock %}
