@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Upcoming Events</title>
+    <style>
+        /* Add custom CSS rules here */
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            margin: 0;
+            padding: 0;
+        }
+
+
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -15px;
+            margin-left: -15px;
+        }
+
+        .col-md-4 {
+            width: 33.33333%;
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border: 1px solid rgba(0, 0, 0, 0.125);
+            border-radius: 0.25rem;
+        }
+
+        .card-body {
+            flex: 1 1 auto;
+            padding: 1.25rem;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .card-text {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .text-muted {
+            color: #6c757d !important;
+        }
+
+        .date {
+            font-size: 14px;
+        }
+
+        .location {
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+{#                {% block logo %}#}
+{#                    <img src="{{ (asset('uploads/e2cf96322a254ceba58fd07d5a2caf1a.jpg')) }}">#}
+{#                {% endblock %}#}
+        <h1 class="text-center">Upcoming Events</h1>
+    </div>
+    <div class="row">
+        {% for event in events %}
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+{#                                                <img src="{{ asset('uploads/' ~ event.image) }}" alt="{{ event.image }} image" class="card-img-top event-image" style="height: 300px; width: 300px;">#}
+
+                        <h5 class="card-title">{{ event.title }}</h5>
+                        <p class="card-text">{{ event.description }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted date">{{ event.getDate()|date("m/d/Y") }}</small>
+                            <small class="text-muted location">{{ event.location }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+</body>
+</html>

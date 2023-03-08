@@ -3,12 +3,20 @@
 namespace App\Form;
 
 use App\Entity\Events;
-use Doctrine\DBAL\Types\DateType;
+
 use Symfony\Component\Form\AbstractType;
+
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
+
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+
 
 class EventType extends AbstractType
 {
@@ -19,6 +27,13 @@ class EventType extends AbstractType
             ->add('description',TextareaType::class)
             ->add('date',DateType::class)
             ->add('location',TextType::class)
+            ->add('image', FileType::class, [
+                'label' => false,
+//                'multiple' => true,
+                'mapped' => false,
+                'required' => false,
+            ])
+            ->add('save',SubmitType::class);
         ;
     }
 

@@ -1,20 +1,47 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Hello EventController!{% endblock %}
+{% extends 'baseBack.html.twig' %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="container my-5">
+        <div class="d-flex justify-content-between mb-4">
+            <h3>Events</h3>
+            <div>
+                <a href="{{ path('event_add') }}" class="btn btn-success me-2">Add Event</a>
+                <a href="{{ path('participant_list') }}" class="btn btn-success">Participant List</a>
+            </div>
+        </div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        <table class="table table-striped" border="3" align="center">
+            <thead style="background-color: #6c757d; color: #fff;">
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Location</th>
+                <th>image</th>
+                <th>Edit</th>
+                <th>Delete</th>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Users/Asus/Documents/github/Sustainability-Hub/src/Controller/EventController.php'|file_link(0) }}">src/Controller/EventController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Users/Asus/Documents/github/Sustainability-Hub/templates/event/index.html.twig'|file_link(0) }}">templates/event/index.html.twig</a></code></li>
-    </ul>
-</div>
+            </tr>
+            </thead>
+            <tbody>
+            {% for event in events %}
+                <tr>
+                    <td>{{ event.title }}</td>
+                    <td>{{ event.description }}</td>
+                    <td>{{ event.getDate()|date('m/d/Y') }}</td>
+                    <td>{{ event.location }}</td>
+{#                    <td><img src="{{ ('uploads/'~event.image) }}" style=" width:60px; height:50px; " alt=""/></td>#}
+                    <td>  <img src="{{ asset('uploads/' ~ event.image) }}" style=" width:60px; height:50px; alt:"{{ event.image }}" > </td>
+
+                    <td>
+                        <a href="{{ path('modifier', {id: event.id}) }}" class="btn btn-primary">Edit</a>
+                    </td>
+                    <td>
+                        <a href="{{ path('supprimer', {id: event.id}) }}" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
