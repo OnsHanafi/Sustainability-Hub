@@ -1,0 +1,34 @@
+{% extends 'baseBack.html.twig' %}
+
+{% block body %}
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">EDIT Event</div>
+                    <div class="card-body">
+                        {{ form_start(form, { 'attr': {'novalidate': 'novalidate'} }) }}
+                        <div class="form-group">
+                            {{ form_label(form.title, 'Title') }}
+                            {{ form_widget(form.title, { 'attr': {'class': 'form-control'} }) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.description, 'Description') }}
+                            {{ form_widget(form.description, { 'attr': {'class': 'form-control'} }) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.date, 'Date') }}
+                            {{ form_widget(form.date, { 'attr': {'class': 'form-control'} }) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_label(form.location, 'Location') }}
+                            {{ form_widget(form.location, { 'attr': {'class': 'form-control'} }) }}
+                        </div>
+                        {#                        <button type="submit" class="btn btn-primary">Add Event</button>#}
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

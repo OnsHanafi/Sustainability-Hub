@@ -38,6 +38,23 @@ class EventsRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+//order date de event DESC
+    public function orderEventsByDateDesc(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->orderBy('e.date', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    //order date de event ASC
+    public function orderEventsByDateAsc(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->orderBy('e.date', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 
 //    /**
 //     * @return Events[] Returns an array of Events objects
