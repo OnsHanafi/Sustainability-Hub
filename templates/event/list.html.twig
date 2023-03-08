@@ -1,39 +1,49 @@
-{% extends 'baseback.html.twig' %}
+{% extends 'baseBack.html.twig' %}
 
 
 {% block body %}
 
-    <div class="example-wrapper">
-        <h1>Events</h1>
+<div class="example-wrapper">
+	<h1>Events</h1>
 
-        <table class="table" border="3" align="center">
-            <thead>
-            <tr>
-                <th>title</th>
-                <th>description</th>
-                <th>date</th>
-                <th>location</th>
-                <th>modifier</th>
-                <th>supprimer</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                {% for events in events %}
-            <tr>
-                <td>  {{ events.title }} </td>
-                <td>  {{ events.description }} </td>
-                <td>  {{ events.getDate()|date("m/d/Y")   }} </td>
-                <td>  {{ events.location }} </td>
-
-                         </td>
-                                <td><a class="btn btn-success" href="{{path('modifier',{ id:events.id}      ) }}" > modifier </a></td>
-                               </td>
-                                <td> <a class="btn btn-danger" href="{{path('supprimer',{ id:events.id}      ) }} " >supprimer </a>  <td>
-            </tr>
-            {% endfor %}
-            </tr>
-            </tbody>
-        </table>
-    </div>
-{% endblock %}
+	<table class="table" border="3" align="center">
+		<thead>
+			<tr>
+				<th>title</th>
+				<th>description</th>
+				<th>date</th>
+				<th>location</th>
+				<th>modifier</th>
+				<th>supprimer</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				{% for events in events %}
+					<tr>
+						<td>
+							{{ events.title }}
+						</td>
+						<td>
+							{{ events.description }}
+						</td>
+						<td>
+							{{ events.getDate()|date("m/d/Y")   }}
+						</td>
+						<td>
+							{{ events.location }}</td>
+					</tr>
+				</td>
+				<td>
+					<a class="btn btn-success" href="{{path('modifier',{ id:events.id} ) }}">
+						modifier
+					</a>
+				</td>
+			</tr>
+		</tbody>
+	</td>
+	<td>
+		<a class="btn btn-danger" href="{{path('supprimer',{ id:events.id} ) }} ">supprimer</a>
+	</td>
+	<td></td>
+</tr>{% endfor %}</tr></tbody></table></div>{% endblock %}
