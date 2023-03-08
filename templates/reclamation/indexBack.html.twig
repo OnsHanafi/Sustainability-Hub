@@ -1,0 +1,46 @@
+{% extends 'baseBack.html.twig' %}
+
+{% block title %}Reclamation {% endblock %}
+{% block body %}
+  <h1 class="mb-4">Reclamations</h1>
+
+  <table id="myTable" class="table table-striped table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Contenu</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Email</th>
+        <th scope="col">Prenom</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for reclamation in rec %}
+        <tr>
+          <td>{{ reclamation.id }}</td>
+          <td>{{ reclamation.contenu }}</td>
+          <td>{{ reclamation.nom }}</td>
+          <td>{{ reclamation.email }}</td>
+          <td>{{ reclamation.prenom }}</td>
+          <td>
+            <a href="{{ path('delete1', {'id': reclamation.id}) }}" class="btn btn-danger mr-2">Supprimer</a>
+            <a href="{{ path('app_ajoute', {'id': reclamation.id}) }}" class="btn btn-primary">Répondre</a>
+            
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+  <a href="{{ path('read_front') }}" class="btn btn-success">Afficher les Réclamation</a>
+  <div class="d-flex align-items-center">
+    <a class="btn btn-success mr-2" href="{{ path('generator_service') }}">PDF</a>
+    
+  </div>
+</div>
+{{ knp_pagination_render(rec) }}
+ 
+  
+{% endblock %}

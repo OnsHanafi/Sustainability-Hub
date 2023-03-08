@@ -1,0 +1,279 @@
+
+{% extends 'baseFront.html.twig' %}
+{% block body %}
+  <h1 class="mb-4">Reclamations</h1>
+
+  <table class="table table-striped table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Contenu</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Email</th>
+        <th scope="col">Prenom</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for reclamation in rec %}
+        <tr>
+          <td>{{ reclamation.id }}</td>
+          <td>{{ reclamation.contenu }}</td>
+          <td>{{ reclamation.nom }}</td>
+          <td>{{ reclamation.email }}</td>
+          <td>{{ reclamation.prenom }}</td>
+          <td>
+          
+            <a href="{{ path('delete1', {'id': reclamation.id}) }}" class="btn btn-danger mr-2">Supprimer</a>
+            <a href="{{ path('update', {'id': reclamation.id}) }}" class="btn btn-primary">Modifier</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="d-flex justify-content-between align-items-center">
+    <a href="{{ path('app_reclamation1') }}" class="btn btn-success mt-4 mr-2">Créer une nouvelle réclamation</a>
+    <ul class="list-unstyled mb-0">
+        <li>
+            <a class="text-decoration-none text-dark" href="{{ path('orderE') }}">Trier par Email</a>
+        </li>
+        <li>
+            <a class="text-decoration-none text-dark" href="{{ path('orderN') }}">Trier par Nom</a>
+        </li>
+        
+    </ul>
+    
+</div>
+ 
+   {%block recherche%}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<form id="search-form">
+		<div class="form-group">
+			<input type="text" name="searchTerm" class="form-control" placeholder="Write Here ">
+		</div>
+		
+		<script>
+
+			 $('#search-form input[name="searchTerm"]').on('input', function () {
+            // Get the search term from the form
+			var messageElement = $('#search-message');
+            var searchTerm = $(this).val();
+            
+            // Check if searchTerm is empty
+            if (searchTerm < 1 ) {	
+                 $('#search-results-table').addClass('d-none');
+				  messageElement.text('');
+       			
+                return;
+            }else{
+				// Send Ajax request to search for users
+				$.ajax({
+					url: '{{ path('SearchR') }}',
+					type: 'POST',
+					data: {
+							searchTerm: searchTerm
+							},
+					dataType: 'json',
+					success: function (response) { // Update search results
+							
+							$('#search-results').empty();
+
+							if (response.length > 0) {
+								$('#search-results-table').removeClass('d-none');
+								
+								$.each(response, function (i, Otherec) {
+									var row = $('<tr>');
+									row.append($('<td>').text(Otherec.contenu));
+									row.append($('<td>').text(Otherec.nom));
+									row.append($('<td>').text(Otherec.email));
+									row.append($('<td>').text(Otherec.prenom));
+									//edit button
+									var editButton = $('<button>').addClass('btn btn-primary').text('Modifier');
+            						editButton.click(function () {
+                					var editUrl = "{{ path('update', {'id': '_IDREC_'}) }}";
+                					editUrl = editUrl.replace('_IDUSER_', Otherec.id);
+                					window.location.href = editUrl;
+           							 });
+            						row.append($('<td>').append(editButton));
+									// delete button
+									var deleteButton = $('<button>').addClass('btn btn-danger').text('Supprimer');
+            						deleteButton.click(function () {
+                					var deleteUrl = "{{ path('delete1', {'id': '_IDREC_'}) }}";
+                					deleteUrl = deleteUrl.replace('_IDUSER_', Otherec.id);
+                					window.location.href = deleteUrl;
+           							 }); 
+            						row.append($('<td>').append(deleteButton));
+
+									$('#search-results').append(row);
+								});
+							messageElement.text('');
+							} else { 
+								// Hide search results table
+							$('#search-results-message').addClass('d-none');
+							$('#search-results-table').removeClass('d-none');
+							// messageElement.text('No users found.');
+							
+							
+							}
+						},
+					error: function (xhr) { // Handle error 
+					messageElement.text('Error: ' + xhr.responseText);
+					$('#search-results-table').addClass('d-none');
+					
+						}
+							});
+
+			}
+			
+		});
+
+
+					
+				
+        </script>
+    </form>
+
+    {# search results  #}
+	<div id="search-message" style="color:red;" ></div>
+    <div class="search-results-table d-none" id="search-results-table">
+	<h4 style="color:blue;">Reclamations's List</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Contenu</th>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Prenom</th>
+					
+                </tr>
+            </thead>
+            <tbody id="search-results"></tbody>
+        </table>
+		</br>
+		</br>
+		</br>
+		</br>
+    </div>
+
+{% endblock %}
+    
+
+
+{% endblock %}
+
+{%block entete%}
+   <body>
+  <div class="hero_area">
+    <!-- header section strats -->
+    <header class="header_section">
+      <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg custom_nav-container ">
+          <a class="navbar-brand" href="index.html">
+            <h3>
+              Joson
+            </h3>
+            <span> college</span>
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse ml-auto" id="navbarSupportedContent">
+            <ul class="navbar-nav  ml-auto">
+              <li class="nav-item active">
+                <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="about.html"> About </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="course.html"> Courses </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="event.html"> Events </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="contact.html">Contact us</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="login.html">Login</a>
+              </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0 ml-0 ml-lg-4 mb-3 mb-lg-0">
+              <button class="btn  my-2 my-sm-0 nav_search-btn" type="submit"></button>
+            </form>
+          </div>
+        </nav>
+      </div>
+    </header>
+    <!-- end header section -->
+    <!-- slider section -->
+    <section class=" slider_section position-relative">
+      <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+          <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+          <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+          <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="container">
+              <div class="row">
+                <div class="col">
+                  <div class="detail-box">
+                    <div>
+                      <h1>
+                        E D U C A T I O N
+                      </h1>
+                      <a href="">
+                        Read More
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item ">
+            <div class="container">
+              <div class="row">
+                <div class="col">
+                  <div class="detail-box">
+                    <div>
+                      <h1>
+                        E D U C A T I O N
+                      </h1>
+                      <a href="">
+                        Read More
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item ">
+            <div class="container">
+              <div class="row">
+                <div class="col">
+                  <div class="detail-box">
+                    <div>
+                      <h1>
+                        E D U C A T I O N
+                      </h1>
+                      <a href="">
+                        Read More
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- end slider section -->
+  </div>
+{%endblock%}
