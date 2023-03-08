@@ -366,7 +366,7 @@ class UserController extends AbstractController
         $loggedInUser = $userRepository->find($userId);
         // dump($loggedInUser);
         // render the users list
-        return $this->render('user/admin/index.html.twig', ['users' => $users, 'user' => $loggedInUser]);
+        return $this->render('user/admin/gestionUsers.html.twig', ['users' => $users, 'user' => $loggedInUser]);
     }
 
     //Delete user AfminSide 
