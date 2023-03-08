@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EventsRepository::class)]
@@ -15,6 +16,7 @@ class Events
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups("event")]
     private ?int $id = null;
 
 
@@ -22,22 +24,26 @@ class Events
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message:"titre obligatoire")]
+    #[Groups("event")]
     private ?string $title = null;
 
 
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message:"description obligatoire")]
+    #[Groups("event")]
     private ?string $description = null;
 
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotBlank(message:"choose date ")]
+    #[Groups("event")]
     private ?\DateTimeInterface $date = null;
 
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message:"location obligatoire ")]
+    #[Groups("event")]
     private ?string $location = null;
 
 

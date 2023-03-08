@@ -1,0 +1,30 @@
+
+{% block body %}
+    <div class="container">
+        <h1 class="text-center mb-4">Liste des participants</h1>
+
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Téléphone</th>
+                <th>email</th>
+                <th>Événement</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for participant in participants %}
+                <tr>
+                    <td>{{ participant.name }}</td>
+                    <td>{{ participant.phone_number }}</td>
+                    <td>{{ participant.email }}</td>
+                    <td>{{ participant.title }}</td>
+                </tr>
+            {% endfor %}
+
+
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -2,6 +2,8 @@
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('/tempfront/css/events.css') }}">
+{#    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-jfqup6JXZC+lz1nUd7F+L1HkbcjyaLeJp6uKnAWVhqRvZzCO7ZKj+GdOh7Vef2v+0IwW8Oq3sG1J4QvT+HJm8A==" crossorigin="anonymous" referrerpolicy="no-referrer" />#}
+
 {% endblock %}
 
 {% block body %}
@@ -9,6 +11,21 @@
     <div class="container">
         <h1 class="text-center">Upcoming Events</h1>
         <br>
+        <div class="text-center">
+        <a  href="{{ path('event_pdf') }}" class="btn btn-primary">Telecharger la liste des evenement en PDF</a>
+        </div>
+        <br>
+
+        <div class="text-left">
+            <a href="{{ path('event_order_by_date_desc') }}" >Order By Date (Descending) &darr; </a>
+        </div>
+
+        <div class="text-right">
+            <a href="{{ path('event_order_by_date_asc') }}">Order By Date (Ascendant) &uarr;</a>
+        </div>
+
+        <br>
+
 
         <div class="row">
             {% for event in events %}

@@ -7,9 +7,10 @@
     text-align: center;">
             collecte des bouteilless
         </h1>
+
         {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'my-4'}}) }}
 
-
+    </div>
         <div class="form-group">
             {{ form_label(form.name, 'Name', {'label_attr': {'class': 'control-label'}}) }}
             {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
@@ -21,6 +22,13 @@
             {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control'}}) }}
             {{ form_errors(form.phoneNumber, {'attr': {'class': 'text-danger'}}) }}
         </div>
+
+
+    <div class="form-group">
+        {{ form_label(form.email, 'email', {'label_attr': {'class': 'control-label'}}) }}
+        {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.email, {'attr': {'class': 'text-danger'}}) }}
+    </div>
 
 
 
