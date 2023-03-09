@@ -38,6 +38,21 @@ class ServiceRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+    //tire
+public function order_By_titre()
+{
+    return $this->createQueryBuilder('s')
+        ->orderBy('s.nom', 'ASC')
+        ->getQuery()->getResult();
+}
+//localisation
+public function orderByLocalisation()
+{
+    return $this->createQueryBuilder('r')
+        ->orderBy('r.localisation', 'ASC')
+        ->getQuery()
+        ->getResult();
+}
 
 //    /**
 //     * @return Service[] Returns an array of Service objects

@@ -19,7 +19,7 @@ use Knp\Component\Pager\PaginatorInterface;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-
+use App\Entity\PdfGeneratorService;
 
 
 class ServiceController extends AbstractController
@@ -35,7 +35,7 @@ class ServiceController extends AbstractController
 
 
     /********************************************** */
-    #[Route('/service/showService', name: 'app_serviceShow')]
+    #[Route('/service/showService', name: 'app_service')]
     public function index( PaginatorInterface $paginator,Request $request): Response
     {
         $service= $this->getDoctrine()
@@ -51,7 +51,7 @@ class ServiceController extends AbstractController
      return $this->render('Service/index.html.twig', ['service' => $service]);
     }
 
-    #[Route('/serviceFront', name: 'app_serviceFront')]
+    #[Route('/service/serviceFront', name: 'app_serviceFront')]
     public function Front(PaginatorInterface $paginator,Request $request): Response
     {
         $service= $this->getDoctrine()
@@ -64,18 +64,19 @@ class ServiceController extends AbstractController
             );
       return $this->render('Service/ServiceFront.html.twig', ['service' => $service]);
     }
-    #[Route('/serviceCreate', name: 'create_service')]
+    #[Route('/service/serviceCreate', name: 'create_service')]
     public function addService(Request $request ): Response
     {
         $service= new service();
         $form = $this->createForm(ServiceType::class,$service);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid())
-        {$file = $service->getImage();
+        {//$file = $service->getImage();
+            $file = $form->get('image')->getData();
             $filename = md5(uniqid()).'.'.$file->guessExtension();
             $file->move($this->getParameter('uploads'),$filename);
             $service->setImage($filename);
-       
+          
         
             $em=$this->getDoctrine()->getManager();
             $em->persist($service);
@@ -117,7 +118,8 @@ public function update(Request $request,$id): Response
 
     $form->handleRequest($request);
     if($form->isSubmitted() && $form->isValid())
-    {$file = $service->getImage();
+    {//$file = $service->getImage();
+        $file = $form->get('image')->getData();
         $filename = md5(uniqid()).'.'.$file->guessExtension();
         $file->move($this->getParameter('uploads'),$filename);
         $service->setImage($filename);
@@ -149,7 +151,7 @@ public function recherche(Request $request,$id): Response
     return $this->render('Service/ServiceRech.html.twig', ['service' => $service]);
 }
 /***************************************PDF****************************************** */
-/*
+
 #[Route('/pdf/service', name: 'generator_service')]
     public function pdfService(): Response
     { 
@@ -172,7 +174,7 @@ public function recherche(Request $request,$id): Response
 
 
     /*************************Statistique********************************** */
-    #[Route('/statistique', name: 'stats')]
+    #[Route('/service/statistique', name: 'stats')]
 public function stat()
     {
 
@@ -236,7 +238,7 @@ public function stat()
 #[Route('/dislike/{id}', name: 'dislike_service')]
 public function dislike(Request $request, Service $service)
 {
-    $service->setDislikes($service->getDislikes() + 1);
+    $service->setDislike($service->getDislike() + 1);
     $this->getDoctrine()->getManager()->flush();
  
     return $this->redirectToRoute('app_serviceFront');
@@ -252,7 +254,7 @@ public function like(Request $request, Service $service)
 
 }
 /*****************************************************************************Recherche */
-#[Route("/search", name: "searchService")]
+/*#[Route("/search", name: "searchService")]
     public function searchService(Request $request, serviceRepository $serviceRepository)
     {
         try {
@@ -294,7 +296,7 @@ public function like(Request $request, Service $service)
 
 /*********************************************************************** */
 //Email
-#[Route('/orderTitre', name: 'orderTitre')]
+#[Route('/service/orderTitre', name: 'orderTitre')]
     public function order_By_Titre(Request $request,ServiceRepository $serviceRepository): Response
     {
 //list of students order By Dest
@@ -305,7 +307,7 @@ public function like(Request $request, Service $service)
         ]);
     }
     //Nom
-    #[Route('/orderLocalisatio', name: 'orderLocalisation')]
+    #[Route('/service/orderLocalisatio', name: 'orderLocalisation')]
     public function orderByLocalisation(ServiceRepository $repository)
     {
         $service = $repository->orderByLocalisation();

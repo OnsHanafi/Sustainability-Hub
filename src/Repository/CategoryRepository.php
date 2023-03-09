@@ -46,13 +46,13 @@ class CategoryRepository extends ServiceEntityRepository
             ;
     }
 
-    public function findType($type){
+    /*public function findType($type){
         return $this->createQueryBuilder('Category')
             ->where('Category.type LIKE :type')
             ->setParameter('type', '%'.$type.'%')
             ->getQuery()
             ->getResult();
-    }
+    }*/
 //    /**
 //     * @return Category[] Returns an array of Category objects
 //     */

@@ -1,316 +1,209 @@
 <?php
 
 namespace App\Controller;
-use App\Entity\Service;
-use App\Form\ServiceType;
-use App\Repository\ServiceRepository;
+use  App\Form\CategoryType;
+use App\Entity\Category;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mime\MimeTypes;
-use Symfony\Component\Asset\Package;
-use Symfony\Component\Asset\VersionStrategy\JsonManifestVersionStrategy;
+use Doctrin\ORM\EntityManagerInterface;
 use CMEN\GoogleChartsBundle\GoogleCharts\Charts\PieChart;
-use App\Entity\PdfGeneratorService;
-use App\Notification\NouveauCompteNotification;
-
-use Knp\Component\Pager\PaginatorInterface; 
-
 use Symfony\Component\HttpFoundation\JsonResponse;
-
-
-
-
-class ServiceController extends AbstractController
-
-
-
+class CategoryController extends AbstractController
 {
 
-
-
-
-    /**********************Notification*********************** */
-
-
-    /********************************************** */
-    #[Route('/service', name: 'app_service')]
-    public function index( PaginatorInterface $paginator,Request $request): Response
+    #[Route('/categoryCreate', name: 'Create_category')]
+    public function create(Request $request): Response
     {
-        $service= $this->getDoctrine()
-        ->getRepository(Service::class)
-        ->findAll();
+        
 
-        $service= $paginator->paginate(
-            $service,
-            $request->query->getInt('page', 1),6
-            
-            );
 
-     return $this->render('Service/index.html.twig', ['service' => $service]);
-    }
+        $entityManager = $this->getDoctrine()->getManager();
 
-    #[Route('/serviceFront', name: 'app_serviceFront')]
-    public function Front(PaginatorInterface $paginator,Request $request): Response
-    {
-        $service= $this->getDoctrine()
-        ->getRepository(Service::class)
-        ->findAll();
-        $service= $paginator->paginate(
-            $service,
-            $request->query->getInt('page', 1),6
-            
-            );
-      return $this->render('Service/ServiceFront.html.twig', ['service' => $service]);
-    }
-    #[Route('/serviceCreate', name: 'create_service')]
-    public function addService(Request $request ): Response
-    {
-        $service= new service();
-        $form = $this->createForm(ServiceType::class,$service);
+        $category = new Category();
+        
+       
+       $form=$this->createForm(CategoryType::class,$category);
+
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid())
-        {$file = $service->getImage();
-            $filename = md5(uniqid()).'.'.$file->guessExtension();
-            $file->move($this->getParameter('uploads'),$filename);
-            $service->setImage($filename);
+        {
        
+        $entityManager->persist($category);
+
         
-            $em=$this->getDoctrine()->getManager();
-            $em->persist($service);
-            $em->flush();
-
-            return $this->redirectToRoute('app_service');
-
+        $entityManager->flush();
+        return $this->redirectToRoute('show_category');
         }
 
-        return $this->render('Service/ajouter.html.twig',['form'=>$form->createView()]);
-    }
-    #[Route('/serviceDelete/{id}', name: 'delete_service')]
+       else{
+        return $this->render("Category/add.html.twig", 
+        [
+              'form' => $form->createView()
+              ]
+     );
+       }
 
-public function Supprimer($id){
-    $entityManager = $this->getDoctrine()->getManager();
-        $service= $entityManager->getRepository(Service::class)->find($id);
-
-        if (!$service) {
-            throw $this->createNotFoundException(
-                'No category found for id '.$id
-            );
-        }
-
-        $entityManager->remove($service);
-         $entityManager->flush();
-    return $this->redirectToRoute('app_service');
-}
-
-
-#[Route('/serviceUpdate/{id}', name: 'update_service')]
-public function update(Request $request,$id): Response
-{
-    $entityManager = $this->getDoctrine()->getManager();
-   
-
-    $service= $entityManager->getRepository(Service::class)->find($id);
-
-    $form=$this->createForm(ServiceType::class,$service);
-
-    $form->handleRequest($request);
-    if($form->isSubmitted() && $form->isValid())
-    {$file = $service->getImage();
-        $filename = md5(uniqid()).'.'.$file->guessExtension();
-        $file->move($this->getParameter('uploads'),$filename);
-        $service->setImage($filename);
-   
-   
-    $entityManager->persist($service);
-
-    
-    $entityManager->flush();
-    return $this->redirectToRoute('app_service');
     }
 
-   else{
-    return $this->render("service/ajouter.html.twig", 
-    [
-          'form' => $form->createView()
-          ]
- );
-   }
-
-}
-#[Route('/serviceRech/{id}', name: 'rech_service')]
-public function recherche(Request $request,$id): Response
-{
-    $entityManager = $this->getDoctrine()->getManager();
-   
-
-    $service= $entityManager->getRepository(Service::class)->find($id);
-    return $this->render('Service/ServiceRech.html.twig', ['service' => $service]);
-}
-/***************************************PDF****************************************** */
-#[Route('/pdf/service', name: 'generator_service')]
-    public function pdfService(): Response
-    { 
-        $service= $this->getDoctrine()
-        ->getRepository(Service::class)
-        ->findAll();
-
-   
-
-        $html =$this->renderView('pdfService/index.html.twig', ['service' => $service]);
-        $pdfGeneratorService=new PdfGeneratorService();
-        $pdf = $pdfGeneratorService->generatePdf($html);
-
-        return new Response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="document.pdf"',
-        ]);
-       
-    }
+    #[Route('/categoryShow', name: 'show_category')]
 
 
-    /*************************Statistique********************************** */
-    #[Route('/statistique', name: 'stats')]
-public function stat()
+    public function showAll(): Response
     {
-
-        $repository = $this->getDoctrine()->getRepository(Service::class);
-        $service= $repository->findAll();
-
-        $em = $this->getDoctrine()->getManager();
-
-
-        $pr1 = 0;
-        $pr2 = 0;
-
-
-        foreach ($service as $service) {
-            if ($service->getCategory() == "sondes")  :
-
-                $pr1 += 1;
-            else:
-
-                $pr2 += 1;
-
-            endif;
-
-        }
-
-        $pieChart = new PieChart();
-        $pieChart->getData()->setArrayToDataTable(
-            [['Category', 'nom'],
-                ['service de type sondes', $pr1],
-                ['service ne sont pas de type sondes', $pr2],
-            ]
-        );
-        $pieChart->getOptions()->setTitle('Catégories des services');
-        $pieChart->getOptions()->setHeight(1000);
-        $pieChart->getOptions()->setWidth(1400);
-        $pieChart->getOptions()->getTitleTextStyle()->setBold(true);
-        $pieChart->getOptions()->getTitleTextStyle()->setColor('green');
-        $pieChart->getOptions()->getTitleTextStyle()->setItalic(true);
-        $pieChart->getOptions()->getTitleTextStyle()->setFontName('Arial');
-        $pieChart->getOptions()->getTitleTextStyle()->setFontSize(30);
+        $category = $this->getDoctrine()
+            ->getRepository(Category::class)
+            ->findAll();
 
        
 
-        return $this->render('service/stat.html.twig', array('piechart' => $pieChart));
+         return $this->render('Category/index.html.twig', ['category' => $category]);
     }
+    #[Route('/categoryDelete/{id}', name: 'delete_category')]
 
-/******************Map**************************** */
+    public function Supprimer($id){
+        $entityManager = $this->getDoctrine()->getManager();
+            $categ= $entityManager->getRepository(Category::class)->find($id);
+    
+            if (!$categ) {
+                throw $this->createNotFoundException(
+                    'No category found for id '.$id
+                );
+            }
+    
+            $entityManager->remove($categ);
+             $entityManager->flush();
+        return $this->redirectToRoute('show_category');
+    }
     
 
-     #[Route('/mapM',name:'mapM')]
-     
-    public function Map()
+    #[Route('/categoryUpdate/{id}', name: 'update_category')]
+    public function update(Request $request,$id): Response
     {
+        $entityManager = $this->getDoctrine()->getManager();
+       
 
-        return $this->render('service/map.html.twig');
-    }
+        $categ= $entityManager->getRepository(Category::class)->find($id);
     
-/***************************Like &Dsilike******************************************** */
+        $form=$this->createForm(CategoryType::class,$categ);
 
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid())
+        {
+       
+        $entityManager->persist($categ);
 
-#[Route('/dislike/{id}', name: 'dislike_service')]
-public function dislike(Request $request, Service $service)
-{
-    $service->setDislikes($service->getDislikes() + 1);
-    $this->getDoctrine()->getManager()->flush();
+        
+        $entityManager->flush();
+        return $this->redirectToRoute('show_category');
+        }
+
+       else{
+        return $this->render("Category/update.html.twig", 
+        [
+              'form' => $form->createView()
+              ]
+     );
+       }
+
+    }
+
  
-    return $this->redirectToRoute('app_serviceFront');
-}
-
-#[Route('/like/{id}', name: 'like_service')]
-public function like(Request $request, Service $service)
-{
-    $service->setLikes($service->getLikes() + 1);
-    $this->getDoctrine()->getManager()->flush();
-
-    return $this->redirectToRoute('app_serviceFront');
-
-}
-/*****************************************************************************Recherche */
-#[Route("/search", name: "searchService")]
-    public function searchService(Request $request, serviceRepository $serviceRepository)
+    #[Route('/displayMobile', name: 'displayMobile')]
+    public function displayServiceMobile(NormalizerInterface $normalizer): Response
     {
-        try {
-            $searchTerm = $request->request->get('searchTerm');
-            if ($searchTerm === null) {
-                return new Response("y a pas de searchTerm");
-            }
+        $service= $this->getDoctrine()->getRepository(Category::class)->findAll();
+        $jsonContent = $normalizer->normalize($service, 'json', ['groups' => 'post:read']);
+        dump( $jsonContent);
+        return new Response(json_encode($jsonContent));
+       
+    }
+
+  #[Route('/addCategMobile/{type}/{description}', name: 'addCategMobile')]
+    public function addCategoryMobile(Request $request, NormalizerInterface $normalizer,$type,$description): Response
+    {
+        $category = new Category();
+        $entityManager = $this->getDoctrine()->getManager();
+       // $type=$request->query->get('Type');
+        $category->setType($type);
+        
+        //$description = $request->query->get('Description');
+        $category->setDescription($description);
+        $entityManager->persist($category);
+        $entityManager->flush();
+        $jsonContent = $normalizer->normalize($category, 'json', ['groups' => 'post:read']);
+        return new Response(json_encode($jsonContent));
+    } 
+    /****************************** */
+   
+  
+      
+    #[Route("/deleteCategoryMobile", name:"deleteCategorie")]
+     
     
-            $service = $serviceRepository->findBySearchTerm($searchTerm);
-            $foundService = false;
-            if (empty($service)) {
-                return new Response("pas de service");
-            }
-            $response = [];
-    
-            foreach ($service as $Otherec) {
-                $foundService = true;
-                $response[] = [
-                    'id' => $Otherec->getId(),
-                    'image' => $Otherec->getImage(),
-                    'nom' => $Otherec->getNom(),
-                    'categorie' => $Otherec->getCategory(),
-                    'localisation' => $Otherec->getLocalisation(),
-                    'description' => $Otherec->getDescription(),
-                    
-                ];
-            }
-            if (!$foundService) {
-                return new JsonResponse("no Service found");
-            } else {
-                return new JsonResponse($response);
-            }
-        } catch (\Exception $e) {
-            return new Response("Erreur: " . $e->getMessage());
+public function deleteCategoryMobile(Request $request, SerializerInterface $serializer): Response
+    {
+        $id = $request->query->get("id");
+        $entityManager = $this->getDoctrine()->getManager();
+        $category= $entityManager->getRepository(Category::class)->find($id);
+        if ($category!= null) {
+            $entityManager->remove($category);
+            $entityManager->flush();
+            $formatted = $serializer->normalize($category, 'json', ['groups' => 'post:read']);
+
+            return new Response(json_encode($formatted));
+
         }
+
+        return new Response(" category n'existe pas");
     }
 
 
-
-/*********************************************************************** */
-//Email
-#[Route('/orderTitre', name: 'orderTitre')]
-    public function order_By_Titre(Request $request,ServiceRepository $serviceRepository): Response
-    {
-//list of students order By Dest
-        $serviceByTitre= $serviceRepository->order_By_titre();
-
-        return $this->render('service/serviceFront.html.twig', [
-            'service' =>  $serviceByTitre,
-        ]);
-    }
-    //Nom
-    #[Route('/orderLocalisatio', name: 'orderLocalisation')]
-    public function orderByLocalisation(ServiceRepository $repository)
-    {
-        $service = $repository->orderByLocalisation();
     
-        return $this->render('service/serviceFront.html.twig', [
-            'service' => $service,
-        ]);
+     #[Route("/UpdateCategoryMobile/{type}", name:"UpdateCategoryMobile")]
+    
+    public function updateMaisonMobile(Request $request,SerializerInterface $normalizer,$type) : Response {
+        $em = $this->getDoctrine()->getManager();
+        $category = $this->getDoctrine()->getManager()
+            ->getRepository(Category::class)
+            ->find($request->get("id"));
+
+        $category->setType($type);
+       
+        $category->setDescription($request->get("description"));
+       
+
+
+        $em->persist($category);
+        $em->flush();
+        $formatted = $normalizer->normalize($category, 'json', ['groups' => 'post:read']);
+        return new Response("categorie a été modifier ".json_encode($formatted));
+
+    }
+
+
+
+    /*********************ApiSort******************************************* */
+     
+     #[Route("/apiSortType", name:"apiSortType")]
+     
+    public function sortjsonType(NormalizerInterface $Normalizer) : Response
+    {
+        $categ=$this->getDoctrine()->getRepository(Category::class)->SortByType();
+        $jsonContent=$Normalizer->normalize($categ,'json',['groups'=>'post:read']);
+        return new Response(json_encode($jsonContent));
+    }
+    /****************************************************************** */
+    #[Route("/apiFindType/{type}", name:"apiFindType")]
+     
+    public function FindjsonType(NormalizerInterface $Normalizer,$type) : Response
+    {
+        $categ=$this->getDoctrine()->getRepository(Category::class)->findType($type);
+        $jsonContent=$Normalizer->normalize($categ,'json',['groups'=>'post:read']);
+        return new Response(json_encode($jsonContent));
     }
 }

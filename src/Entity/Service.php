@@ -75,12 +75,12 @@ class Service
         return $this;
     }
 
-    public function getImage(): ?string
+    public function getImage()
     {
         return $this->image;
     }
 
-    public function setImage(string $image): self
+   public function setImage( $image)
     {
         $this->image = $image;
 
@@ -115,8 +115,9 @@ class Service
     {
         return $this->category;
     }
-
-    public function setCategory(?Category $category): self
+    public function __toString(){
+        return $this->image;
+    }public function setCategory(?Category $category): self
     {
         $this->category = $category;
 

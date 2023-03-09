@@ -149,6 +149,7 @@ row.append($('<td>').text(Otherec.category);
                 </a>
                 <a class="btn btn-primary" href="{{ path('mapM') }}">Google Maps</a>
                 <a class="btn btn-primary" href="{{ path('stats') }}">Statistique</a>
+                 <a class="btn btn-primary" href="{{ path('generator_service') }}">Exporter PDF</a>
 
                
                 <div class="table-responsive">
@@ -174,7 +175,7 @@ row.append($('<td>').text(Otherec.category);
                                 <tr>
                                     <td>{{ serv.getId() }}</td>
                                     <td>
-                                        <img src="{{ 'uploads/' ~ serv.image }}" 
+                                        <img src="{{ asset('uploads/' ~ serv.image) }}"
                                             style="width:60px; height:50px;" 
                                             class="rounded shadow"
                                             alt=""
@@ -185,7 +186,8 @@ row.append($('<td>').text(Otherec.category);
                                     <td>{{ serv.getLocalisation() }}</td>
                                     <td>{{ serv.getCategory() }}</td>
                                      <td>{{ serv.getLikes() }}</td>
-                                      <td>{{ serv.getDislikes() }}</td>
+                                      <td>{{ serv.getDislike() }}</td>
+                                     
                                     <td>
                                         <a href="{{ path('delete_service', {'id': serv.getId()}) }}"
                                            class="btn btn-danger">

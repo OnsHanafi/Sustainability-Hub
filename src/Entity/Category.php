@@ -57,38 +57,9 @@ class Category
 
         return $this;
     }
-      public function __toString()
+     
+    public function __toString()
     {
         return $this->getType() ;
     }
-
-      /**
-       * @return Collection<int, Service>
-       */
-      public function getCategory(): Collection
-      {
-          return $this->Category;
-      }
-
-      public function addCategory(Service $category): self
-      {
-          if (!$this->Category->contains($category)) {
-              $this->Category->add($category);
-              $category->setCategory($this);
-          }
-
-          return $this;
-      }
-
-      public function removeCategory(Service $category): self
-      {
-          if ($this->Category->removeElement($category)) {
-              // set the owning side to null (unless already changed)
-              if ($category->getCategory() === $this) {
-                  $category->setCategory(null);
-              }
-          }
-
-          return $this;
-      }
 }

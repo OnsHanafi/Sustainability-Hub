@@ -6,6 +6,10 @@ use App\Entity\Service;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class ServiceType extends AbstractType
 {
@@ -13,9 +17,9 @@ class ServiceType extends AbstractType
     {
         $builder
             ->add('nom')
-           
-            ->add('image')
             ->add('localisation')
+            ->add('image',FileType::class, array('data_class' => null,'required' => false, 'mapped' => false))
+           
             ->add('description')
             ->add('category')
         ;
@@ -24,7 +28,7 @@ class ServiceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Service::class,
+           
         ]);
     }
 }
