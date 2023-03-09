@@ -25,10 +25,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class ParticipantController extends AbstractController
 {
     #[Route('/participant/add/{id}', name: 'participant_add')]
-   public function addEvent(Request $request,ManagerRegistry $doctrine,EventsRepository $eventsRepository,$id): Response
+   public function addEvent(SessionInterface $session, UserRepository $userRepository,Request $request,ManagerRegistry $doctrine,EventsRepository $eventsRepository,$id): Response
 //    public function add($id,Request $request, EntityManagerInterface $entityManager,ManagerRegistry $doctrine)
 
     {
+        // get logged in user from session
+        $userId = $session->get('user')['idUser'];
+        $user = $userRepository->find($userId);
+
         $notification=null;
 
         $event=$eventsRepository->find($id);
@@ -53,7 +57,8 @@ class ParticipantController extends AbstractController
         }
         return $this->render('participant/new.html.twig',[
             'form'=> $form->createView(),
-            'event'=> $event
+            'event'=> $event,
+            'user' => $user
         ]);
     }
 

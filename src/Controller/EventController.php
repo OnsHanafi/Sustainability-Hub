@@ -44,7 +44,7 @@ class EventController extends AbstractController
         }
 
 
-        return $this->render('front/frontlist.html.twig', ['events' => $events,'user'=>$user]);
+        return $this->render('front/frontlist.html.twig', ['events' => $events, 'user' => $user]);
     }
 
 
@@ -65,7 +65,7 @@ class EventController extends AbstractController
 
 
     #[Route('/back/add', name: 'event_add', methods: ['GET', 'POST'])]
-    public function addEvent(SessionInterface $session, UserRepository $userRepository,Request $request, ManagerRegistry $doctrine): Response
+    public function addEvent(SessionInterface $session, UserRepository $userRepository, Request $request, ManagerRegistry $doctrine): Response
     {
         // get logged in user from session
         $userId = $session->get('user')['idUser'];
@@ -95,7 +95,7 @@ class EventController extends AbstractController
         }
         return $this->render('event/add.html.twig', [
             'form' => $form->createView(),
-             'user' => $user
+            'user' => $user
         ]);
     }
 
@@ -106,7 +106,7 @@ class EventController extends AbstractController
 
     #[Route('modifier/{id}', name: 'modifier')]
 
-    public function modifier(SessionInterface $session, UserRepository $userRepository,Request $request, ManagerRegistry $doctrine, Events $events): Response
+    public function modifier(SessionInterface $session, UserRepository $userRepository, Request $request, ManagerRegistry $doctrine, Events $events): Response
     {
         // get logged in user from session
         $userId = $session->get('user')['idUser'];

@@ -72,8 +72,12 @@ class ReclamationController extends AbstractController
     }
 
     #[Route('/create', name: 'app_reclamation1')]
-    public function ajouter(Request $request, ReclamationRepository $reclamationRepository): Response
+    public function ajouter(SessionInterface $session, UserRepository $userRepository,Request $request, ReclamationRepository $reclamationRepository): Response
     {
+        // get logged in user from session
+        $userId = $session->get('user')['idUser'];
+        $user = $userRepository->find($userId);
+
         $reclamation = new Reclamation();
         $form = $this->createForm(ReclamationType::class, $reclamation);
         $form->handleRequest($request);
@@ -92,6 +96,7 @@ class ReclamationController extends AbstractController
         return $this->renderForm('reclamation/create.html.twig', [
             'reclamation' => $reclamation,
             'form' => $form,
+            'user' => $user,
         ]);
     }
 
@@ -125,15 +130,20 @@ class ReclamationController extends AbstractController
         $em = $doctrine->getManager();
         $em->remove($objSupp);
         $em->flush();
-        return $this->redirectToRoute('liste');
+        return $this->redirectToRoute('read_front');
     }
 
 
 
 
     #[Route('/update1/{id}', name: 'update')]
-    public function update(Request $request, ManagerRegistry $doctrine, Reclamation $reclamation)
+    public function update(SessionInterface $session, UserRepository $userRepository,Request $request, ManagerRegistry $doctrine, Reclamation $reclamation)
     {
+        // get logged in user from session
+        $userId = $session->get('user')['idUser'];
+        $user = $userRepository->find($userId);
+
+
         //pour créer un formulaire
         $form = $this->createForm(ReclamationType::class, $reclamation);
         //traiter la requete reçu par le formulaire
@@ -145,7 +155,7 @@ class ReclamationController extends AbstractController
             return $this->redirectToRoute('read_front');
         }
 
-        return $this->render('reclamation/edit.html.twig', ['form' => $form->createView()]);
+        return $this->render('reclamation/edit.html.twig', ['form' => $form->createView(),'user' => $user,]);
     }
     ////////////////mobile/////////////////////////////
     #[Route('/reclamation/afficheM', name: 'afficheMo')]
@@ -255,23 +265,32 @@ class ReclamationController extends AbstractController
     ////////////////////////////Trie///////////////////////////
     //Email
     #[Route('/reclamation/email', name: 'orderE')]
-    public function order_By_Prix(Request $request, ReclamationRepository $reclamationRepository): Response
+    public function order_By_Prix(SessionInterface $session, UserRepository $userRepository,Request $request, ReclamationRepository $reclamationRepository): Response
     {
+        // get logged in user from session
+        $userId = $session->get('user')['idUser'];
+        $user = $userRepository->find($userId);
         //list of students order By Dest
         $ReclamationByEmail = $reclamationRepository->order_By_Email();
 
         return $this->render('reclamation/index.html.twig', [
             'rec' => $ReclamationByEmail,
+            'user' => $user,
         ]);
     }
     //Nom
     #[Route('/reclamation/nom', name: 'orderN')]
-    public function orderByName(ReclamationRepository $repository)
+    public function orderByName(SessionInterface $session, UserRepository $userRepository,ReclamationRepository $repository)
     {
+        // get logged in user from session
+        $userId = $session->get('user')['idUser'];
+        $user = $userRepository->find($userId);
+
         $reclamations = $repository->orderByName();
 
         return $this->render('reclamation/index.html.twig', [
             'rec' => $reclamations,
+            'user' => $user,
         ]);
     }
     ///////////////////////////recherche/////////////////////////

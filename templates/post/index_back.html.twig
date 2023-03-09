@@ -1,0 +1,124 @@
+{% extends 'back.html.twig' %}
+{% block body %}
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+{% for post in posts %}
+            <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="p-4 border-bottom bg-light">
+                        <h4 class="card-title mb-0">{{ post.title }}</h4>
+
+                    </div>
+                    <div class="card-body"><div class="chartjs-size-monitor" style="position: absolute; inset: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
+                        <div class="d-flex justify-content-between align-items-center pb-4">
+                            <blockquote class="blockquote-primary"><p style="color: #0c7cd5">{% set l=post.comments|length %}
+                                    {% if l==1 %}
+                                <li><i class="fa fa-comments"></i>{{ post.comments|length }} comment</li>
+                                {% else %}
+                                <li><i class="fa fa-comments"></i>{{ post.comments|length }} comments</li>
+                                {% endif %}</p></blockquote>
+                            <div id="bar-traffic-legend"><div class="chartjs-legend"><ul><li><span style="background-color:#5D62B4"></span>{{ post.dateP ? post.dateP|date('d M Y') : '' }}</li></ul></div></div>
+                        </div>
+                        <div class="form-group">
+                            <a href="{{ path('app_show', {'id':post.id} ) }}" class="btn btn-primary submit-btn btn-block">Post Details</a>
+                        </div>
+                        <img style="height: 300px; display: flex; width: 100%;" width="658" height="328" class="chartjs-render-monitor" src="{{ asset('backOffice/images/product_images_2/thumb_image1.jpg') }}" alt="people">
+                    </div>
+                </div>
+            </div>
+
+{% else %}
+    <h5 style="color: #0b75c9">No posts found</h5>
+{% endfor %}
+            {# //statistique #}
+
+    <!-- content-wrapper ends -->
+    <!-- partial:../../partials/_footer.html -->
+   {#  <footer class="footer">
+        <div class="container-fluid clearfix">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © 2020 <a href="http://wordpress-923989-3206731.cloudwaysapps.com/" target="_blank">Bootstrapdash</a>. All rights reserved.</span>
+            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"><a href="https://wordpress-923989-3206731.cloudwaysapps.com/bootstrap-admin-template/" target="_blank"> Free Bootstrap template </a> from BootstrapDash templates</span>
+        </div>
+    </footer>#}
+    <!-- partial -->
+</div>
+    <div class="card" style="width:100%;display:flex;flex-direction: row;gap:15px;">
+        <br>
+        <div><h4>Statistique:</h4>
+
+           </div>
+<br>
+        <canvas id="myChart" style="width:100%;max-width:600px;text-align: center"></canvas>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+
+        <script class="-adjust">
+            var xValues = [];
+            var yValues = [];
+            {% for post in posts %}
+            xValues.push("{{ post.title}}");
+            yValues.push("{{ post.comments|length }}");
+            {% endfor %}
+
+            new Chart("myChart", {
+                type: "bar",
+                data: {
+                    labels: xValues,
+
+                    datasets: [{
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 2,
+                        data: yValues,
+                    }]
+                },
+                options: {
+                    legend: {display: false},
+                    title: {
+                        display: true,
+                        text: "nombre de commentaires par post",
+                        fontColor: 'rgba(0,10,10,1.8)', // sets font color for y-axis labels
+
+                    },
+                    animation: {
+                        duration: 5000,
+                        easing: 'easeOutBounce' // add a bouncing effect at the end of the animation
+                    },
+
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                fontColor: 'rgba(0,10,10,1.8)', // sets font color for y-axis labels
+                                fontSize: 14 // sets font size for y-axis labels
+                            }
+                        }],
+                        xAxes: [{
+                            ticks: {
+                                fontColor: 'rgba(0,10,10,1.8)', // sets font color for x-axis labels
+                                fontSize: 14 // sets font size for x-axis labels
+                            }
+                        }]
+                    }
+                }
+            });
+
+        </script>
+    <br>
+    <br><br></div>
+
+{% endblock %}

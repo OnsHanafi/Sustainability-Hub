@@ -57,8 +57,13 @@ class ServiceController extends AbstractController
     }
 
     #[Route('/service/serviceFront', name: 'app_serviceFront')]
-    public function Front(PaginatorInterface $paginator,Request $request): Response
-    {
+    public function Front(SessionInterface $session, UserRepository $userRepository,PaginatorInterface $paginator,Request $request): Response
+    {   
+
+        // get logged in user from session
+        $userId = $session->get('user')['idUser'];
+        $user = $userRepository->find($userId);
+
         $service= $this->getDoctrine()
         ->getRepository(Service::class)
         ->findAll();
@@ -67,7 +72,7 @@ class ServiceController extends AbstractController
             $request->query->getInt('page', 1),6
             
             );
-      return $this->render('Service/ServiceFront.html.twig', ['service' => $service]);
+      return $this->render('Service/ServiceFront.html.twig', ['service' => $service,'user'=>$user]);
     }
     #[Route('/service/serviceCreate', name: 'create_service')]
     public function addService(SessionInterface $session, UserRepository $userRepository,Request $request ): Response
