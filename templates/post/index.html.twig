@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Post index{% endblock %}
+
+{% block body %}
+    <section class="course_section layout_padding">
+
+<div class="container">
+
+<div class="course_container">
+        <div class="course_content">
+            {% for post in posts %}
+            <div class="box">
+                <img src="{{ asset('Assets/images/c-1.jpg') }}" alt="" />
+                <a href="{{ path('app_post_show', {'id':post.id} ) }}" class="">
+                    <img src="{{ asset('Assets/images/link.png') }}" alt="" />
+                </a>
+                <h5>
+                    <b>{{ post.title }}</b> <br />
+                    {{ post.details }}
+                </h5>
+            </div>
+            {% else %}
+            <tr>
+              <h5><td colspan="3">No posts for today</td></h5>
+            </tr>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+    </section>
+    <a class="btn btn-primary" href="{{ path('app_post_new') }}">Create new</a>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Post{% endblock %}
+
+{% block body %}
+    <a class="btn btn-secondary" href="{{ path('app_post_index') }}">Back</a>
+
+    <h1>Create new Post</h1>
+
+    {{ include('post/_form.html.twig') }}
+
+{% endblock %}

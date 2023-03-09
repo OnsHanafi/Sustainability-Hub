@@ -1,0 +1,65 @@
+{% extends 'baseBack.html.twig' %}
+{% block body %}
+
+    <div class="main-panel">
+    <div class="content-wrapper">
+    <div class="row">
+            <div class="col-lg-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="p-4 border-bottom bg-light">
+                        <a href="{{ path('app_back_i') }}" type="button" class="btn btn-secondary btn-fw" >Return</a>
+<br>
+                        <br>
+                        <h4 class="card-title mb-0">{{ post.title }}</h4>
+
+
+                    </div>
+                    <div class="card-body"><div class="chartjs-size-monitor" style="position: absolute; inset: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
+                        <div class="d-flex justify-content-between align-items-center pb-4">
+                            <h4 class="card-title mb-0">Author name</h4>
+                            <div id="bar-traffic-legend"><div class="chartjs-legend"><ul><li>
+                                                {{ include('post/delete_back.html.twig') }}</li></ul></div></div>
+                        </div>
+                        <div class="form-group">
+                            <p class="mb-4">{{ post.details }}</p>
+                        </div>
+                        <img style="height: 300px; display: flex; width: 100%;" width="658" height="328" class="chartjs-render-monitor" src="{{ asset('backOffice/images/product_images_2/thumb_image1.jpg') }}" alt="people">
+                    </div>
+                </div>
+            </div>
+        <div class="col-md-6 grid-margin stretch-card">
+
+            <div class="card">
+
+                <div class="card-body">
+                    <div style="display: flex">
+                        <h4 class="card-title">Comments: </h4></div>
+                    {% for comment in post.comments %}
+                    <p class="card-description"> <strong>Author name</strong>
+                    </p>
+                    <blockquote class="blockquote blockquote-primary">
+                        <p>{{ comment.description }}</p>
+                        <blockquote class="blockquote-primary"><p style="color: #0c7cd5">{{ comment.dateC ? comment.dateC|date('d M Y') : '' }}</p>
+                        </blockquote>
+                        <div > {{ include('comment/supp.html.twig') }}</div>
+                    </blockquote>
+                    {% else %}
+                        <h5 style="color: #0b75c9">no comments found</h5>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- content-wrapper ends -->
+        <!-- partial:../../partials/_footer.html -->
+        <footer class="footer">
+            <div class="container-fluid clearfix">
+                <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © 2020 <a href="http://wordpress-923989-3206731.cloudwaysapps.com/" target="_blank">Bootstrapdash</a>. All rights reserved.</span>
+                <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"><a href="https://wordpress-923989-3206731.cloudwaysapps.com/bootstrap-admin-template/" target="_blank"> Free Bootstrap template </a> from BootstrapDash templates</span>
+            </div>
+        </footer>
+        <!-- partial -->
+    </div>
+{% endblock %}

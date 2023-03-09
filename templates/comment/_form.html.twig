@@ -1,0 +1,20 @@
+{{ form_start(form,{'attr':{'novalidate':'novalidate'}}) }}
+
+<div style="width:100%;text-align: center">
+        <h5><b>New Comment</b></h5>
+    </div>
+    <br>
+
+    <div>
+            {{ form_label(form.description) }}
+        </div>
+        <div>
+            {{ form_widget(form.description) }}
+        </div>
+        <div style="height: 10%;width:100%;text-align: center;color:red;"><b>{{  form_errors(form.description) ? form_errors(form.description)  : '' }}</b></div>
+    <br>
+    <div class="text-center">
+        <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+
+    </div>
+{{ form_end(form) }}
