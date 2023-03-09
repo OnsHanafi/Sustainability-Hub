@@ -1,0 +1,64 @@
+
+{% extends 'baseFront.html.twig' %}
+
+{% block stylesheets %}
+	<link
+	rel="stylesheet" href="{{ asset('/tempfront/css/events.css') }}">
+{#    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-jfqup6JXZC+lz1nUd7F+L1HkbcjyaLeJp6uKnAWVhqRvZzCO7ZKj+GdOh7Vef2v+0IwW8Oq3sG1J4QvT+HJm8A==" crossorigin="anonymous" referrerpolicy="no-referrer" />#}
+
+{% endblock %}
+
+{% block body %}
+
+	<div class="container">
+		<h1 class="text-center">Workshops</h1>
+		<br>
+		
+		<br>
+
+		<div class="text-left">
+			<a href="{{ path('orderTitre') }}">Order By Titre 
+			</a>
+		</div>
+
+		<div class="text-right">
+			<a href="{{ path('orderLocalisation') }}">Order By localisation</a>
+		</div>
+
+		<br>
+
+
+		<div class="row">
+			{% for serv in service %}
+				<div class="col-md-4">
+					<div class="card mb-4 shadow-sm">
+						<img src="{{ asset('uploads/' ~ serv.image) }}"  alt="photo" class="card-img-top event-image" style="height: 300px; width: 300px;">
+
+						<div class="card-body">
+							<h5 class="card-title">{{ serv.getNom() }}</h5>
+							<p class="card-text">{{ serv.getLocalisation() }}</p>
+							<div class="d-flex justify-content-between align-items-center">
+								<small class="text-muted date">{{ serv.getDescription() }}</small>
+								<small class="text-muted location">{{ serv.getCategory() }}</small>
+								
+ 
+										 
+							</div>
+							<a href="{{ path('like_service', {'id': serv.getId()}) }}"
+                                     
+                                           > Like</a>
+										  
+
+  <a href="{{ path('dislike_service', {'id': serv.getId()}) }}"
+                                     
+                                           > Dislike</a>
+							
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+			
+
+		</div>
+	</div>
+{% endblock %}
