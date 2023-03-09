@@ -1,0 +1,31 @@
+
+
+{{ form_start(form,{'attr':{'novalidate':'novalidate'}}) }}
+
+<div style="width:100%;text-align: center">
+    <h5><b>New Post</b></h5>
+</div>
+<br>
+
+<div>
+    {{ form_label(form.title) }}
+</div>
+<div>
+    {{ form_widget(form.title) }}
+</div>
+<div style="height: 10%;width:100%;text-align: center;color:red;"><b>{{  form_errors(form.title) ? form_errors(form.title)  : '' }}</b></div>
+<br>
+<div>
+    {{ form_label(form.details) }}
+</div>
+<div>
+    {{ form_widget(form.details) }}
+</div>
+<div style="height: 10%;width:100%;text-align: center;color:red;"><b>{{  form_errors(form.details) ? form_errors(form.details)  : '' }}</b></div>
+<br>
+<div class="text-center">
+    <button class="btn btn-primary">{{ button_label|default('Save') }}</button>
+
+</div>
+{{ form_end(form) }}
+
