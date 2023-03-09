@@ -11,6 +11,7 @@ use App\Form\ParticipantType;
 use App\Form\ParticipeventType;
 use App\Repository\EventsRepository;
 use App\Repository\ParticipantRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Dompdf\Dompdf;
@@ -18,6 +19,7 @@ use Dompdf\Options;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ParticipantController extends AbstractController
@@ -56,8 +58,12 @@ class ParticipantController extends AbstractController
     }
 
         #[Route('/participant/list', name: 'participant_list')]
-    public function ListEventsback(ParticipantRepository $repository): Response
+    public function ListEventsback(SessionInterface $session, UserRepository $userRepository,ParticipantRepository $repository): Response
     {
+        // get logged in user from session
+        $userId = $session->get('user')['idUser'];
+        $user = $userRepository->find($userId);
+
 //        $participant=$repository->findAll();
         $participants = $repository->createQueryBuilder('p')
             ->join('p.Events', 'e')
@@ -68,7 +74,7 @@ class ParticipantController extends AbstractController
             echo $participant['name'] . ', ' . $participant['phone_number'] . ', ' . $participant['email'] . ', ' . $participant['title'] . '<br>';
         }
 
-        return $this->render('participant/participantlist.html.twig',['participants'=>$participants]);
+        return $this->render('participant/participantlist.html.twig',['participants'=>$participants,'user'=>$user]);
     }
 
 

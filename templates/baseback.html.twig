@@ -175,16 +175,16 @@
 						</li>
 						<li class="nav-item dropdown d-none d-xl-inline-block user-dropdown">
 							<a class="nav-link dropdown-toggle" id="UserDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
-								<img class="img-xs rounded-circle" src="{{asset('backOffice/images/faces/face8.jpg')}}" alt="Profile image">
+								{# <img class="img-xs rounded-circle" src="{{asset('backOffice/images/faces/face8.jpg')}}" alt="Profile image"> #}
 							</a>
 							<div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
 								<div class="dropdown-header text-center">
-									<img class="img-md rounded-circle" src="{{asset('backOffice/images/faces/face8.jpg')}}" alt="Profile image">
-									<p class="mb-1 mt-3 font-weight-semibold">Allen Moreno</p>
-									<p class="font-weight-light text-muted mb-0">allenmoreno@gmail.com</p>
+									{# <img class="img-md rounded-circle" src="{{asset('backOffice/images/faces/face8.jpg')}}" alt="Profile image"> #}
+									<p class="mb-1 mt-3 font-weight-semibold">{{user.nom}} {{user.prenom}}</p>
+									<p class="font-weight-light text-muted mb-0">{{user.email}}</p>
 								</div>
-								<a class="dropdown-item">My Profile
-									<span class="badge badge-pill badge-danger">1</span>
+								<a class="dropdown-item" href="{{ path('show_user',{'id': user.idUser})}}">My Profile
+									{# <span class="badge badge-pill badge-danger">1</span> #}
 									<i class="dropdown-item-icon ti-dashboard"></i>
 								</a>
 								<a class="dropdown-item">Messages<i class="dropdown-item-icon ti-comment-alt"></i>
@@ -193,7 +193,7 @@
 								</a>
 								<a class="dropdown-item">FAQ<i class="dropdown-item-icon ti-help-alt"></i>
 								</a>
-								<a class="dropdown-item">Sign Out<i class="dropdown-item-icon ti-power-off"></i>
+								<a class="dropdown-item" href="{{ path('app_logout')}}">Sign Out<i class="dropdown-item-icon ti-power-off"></i>
 								</a>
 							</div>
 						</li>
@@ -209,27 +209,28 @@
 				<!-- partial:../../partials/_sidebar.html -->
 				<nav class="sidebar sidebar-offcanvas" id="sidebar">
 					<ul class="nav">
-						<li class="nav-item nav-profile">
-							{# <a href="#" class="nav-link">
-								<div class="profile-image">
-									<img class="img-xs rounded-circle" src="{{asset('backOffice/images/faces/face8.jpg')}}" alt="profile image">
-									<div class="dot-indicator bg-success"></div>
-								</div>
-								<div class="text-wrapper">
-									<p class="profile-name">Allen Moreno</p>
-									<p class="designation">Premium user</p>
-								</div>
-							</a> #}
+						<li
+							class="nav-item nav-profile">{# <a href="#" class="nav-link">
+																																																																																<div class="profile-image">
+																																																																																	<img class="img-xs rounded-circle" src="{{asset('backOffice/images/faces/face8.jpg')}}" alt="profile image">
+																																																																																	<div class="dot-indicator bg-success"></div>
+																																																																																</div>
+																																																																																<div class="text-wrapper">
+																																																																																	<p class="profile-name">Allen Moreno</p>
+																																																																																	<p class="designation">Premium user</p>
+																																																																																</div>
+																																																																															</a>
+																																																																															</a> #}
 						</li>
 						<li class="nav-item nav-category">Main Menu</li>
 						<li class="nav-item">
-							<a class="nav-link" href="../../index.html">
+							<a class="nav-link" href="{{ path('show_user',{'id': user.idUser})}}">
 								<i class="menu-icon typcn typcn-document-text"></i>
 								<span class="menu-title">Profile</span>
 							</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+							<a class="nav-link" data-toggle="collapse" href="#" aria-expanded="false" aria-controls="ui-basic">
 								<i class="menu-icon typcn typcn-coffee"></i>
 								<span class="menu-title">Workshops</span>
 								<i class="menu-arrow"></i>
@@ -249,7 +250,7 @@
 							</div>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="../../pages/forms/basic_elements.html">
+							<a class="nav-link" href="{{ path('event_list_back')}}">
 								<i class="menu-icon typcn typcn-shopping-bag"></i>
 								<span class="menu-title">Events</span>
 							</a>
@@ -261,15 +262,15 @@
 							</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="../../pages/tables/basic-table.html">
+							<a class="nav-link" href="{{ path('liste')}}">
 								<i class="menu-icon typcn typcn-bell"></i>
 								<span class="menu-title">Reclamation</span>
 							</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="../../pages/icons/font-awesome.html">
+							<a class="nav-link" href="{{ path('app_users') }}">
 								<i class="menu-icon typcn typcn-user-outline"></i>
-								<span class="menu-title">Icons</span>
+								<span class="menu-title">Gestion users</span>
 							</a>
 						</li>
 						<li class="nav-item">
@@ -318,14 +319,14 @@
 					<!-- content-wrapper ends -->
 				<!-- partial:../../partials/_footer.html -->
 					{# <footer class="footer">
-																															<div class="container-fluid clearfix">
-																																<span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © bootstrapdash.com 2020</span>
-																																<span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">
-																																	Free
-																																	<a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin templates</a>
-																																	from Bootstrapdash.com</span>
-																															</div>
-																														</footer> #}
+																																																																												<div class="container-fluid clearfix">
+																																																																													<span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © bootstrapdash.com 2020</span>
+																																																																													<span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">
+																																																																														Free
+																																																																														<a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin templates</a>
+																																																																														from Bootstrapdash.com</span>
+																																																																												</div>
+																																																																											</footer> #}
 					<!-- partial -->
 				</div>
 				<!-- main-panel ends -->

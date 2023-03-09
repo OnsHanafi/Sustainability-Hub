@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Events;
 use App\Form\EventType;
 use App\Repository\EventsRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Dompdf\Dompdf;
@@ -16,6 +17,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -29,10 +31,20 @@ class EventController extends AbstractController
 
     // FRONT :
     #[Route('/front/frontlist', name: 'event_list')]
-    public function ListEvents(EventsRepository $repository): Response
+    public function ListEvents(SessionInterface $session, UserRepository $userRepository, EventsRepository $repository): Response
     {
-        $events=$repository->findAll();
-        return $this->render('front/frontlist.html.twig',['events'=>$events]);
+        try {
+            // get logged in user from session
+            $userId = $session->get('user')['idUser'];
+            $user = $userRepository->find($userId);
+            $events = $repository->findAll();
+        } catch (\Throwable $th) {
+            $user = null;
+            $events = $repository->findAll();
+        }
+
+
+        return $this->render('front/frontlist.html.twig', ['events' => $events,'user'=>$user]);
     }
 
 
@@ -41,21 +53,29 @@ class EventController extends AbstractController
 
     // list backadmin :
     #[Route('/event/list', name: 'event_list_back')]
-    public function ListEventsback(EventsRepository $repository): Response
+    public function ListEventsback(SessionInterface $session, UserRepository $userRepository, EventsRepository $repository): Response
     {
-        $events=$repository->findAll();
-            return $this->render('event/index.html.twig',['events'=>$events]);
+        // get logged in user from session
+        $userId = $session->get('user')['idUser'];
+        $user = $userRepository->find($userId);
+
+        $events = $repository->findAll();
+        return $this->render('event/index.html.twig', ['events' => $events, 'user' => $user]);
     }
 
 
     #[Route('/back/add', name: 'event_add', methods: ['GET', 'POST'])]
-    public function addEvent(Request $request,ManagerRegistry $doctrine): Response
+    public function addEvent(SessionInterface $session, UserRepository $userRepository,Request $request, ManagerRegistry $doctrine): Response
     {
-        $event=new Events();
-        $form = $this->createForm(EventType::class,$event);
+        // get logged in user from session
+        $userId = $session->get('user')['idUser'];
+        $user = $userRepository->find($userId);
+
+        $event = new Events();
+        $form = $this->createForm(EventType::class, $event);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             $file = $form->get('image')->getData();
             if ($file instanceof UploadedFile) {
                 $filename = md5(uniqid()) . '.' . $file->guessExtension();
@@ -73,8 +93,9 @@ class EventController extends AbstractController
 
             return $this->redirectToRoute('event_list_back');
         }
-        return $this->render('event/add.html.twig',[
-            'form'=> $form->createView(),
+        return $this->render('event/add.html.twig', [
+            'form' => $form->createView(),
+             'user' => $user
         ]);
     }
 
@@ -85,12 +106,15 @@ class EventController extends AbstractController
 
     #[Route('modifier/{id}', name: 'modifier')]
 
-    public function modifier(Request $request , ManagerRegistry $doctrine,Events $events): Response
+    public function modifier(SessionInterface $session, UserRepository $userRepository,Request $request, ManagerRegistry $doctrine, Events $events): Response
     {
+        // get logged in user from session
+        $userId = $session->get('user')['idUser'];
+        $user = $userRepository->find($userId);
 
         $form = $this->createForm(EventType::class, $events);
         $form->handleRequest($request);
-        if ($form ->IsSubmitted()&& $form->isValid()) {
+        if ($form->IsSubmitted() && $form->isValid()) {
 
             $file = $form->get('image')->getData();
             if ($file instanceof UploadedFile) {
@@ -105,28 +129,26 @@ class EventController extends AbstractController
             $em->persist($events);
             //flush=pish
             $em->flush();
-            return $this->redirectToRoute('event_list_back', [
-            ]);
+            return $this->redirectToRoute('event_list_back', []);
         }
 
         return $this->render('event/edit.html.twig', [
             'form' => $form->createView(),
+            'user' => $user
         ]);
-
     }
 
 
     #[Route('supprimer/{id}', name: 'supprimer')]
 
-    public function supprimer($id , ManagerRegistry $doctrine): Response
+    public function supprimer($id, ManagerRegistry $doctrine): Response
     {
-        $em=$doctrine->getManager();
-        $events =$doctrine->getRepository(Events::class);
+        $em = $doctrine->getManager();
+        $events = $doctrine->getRepository(Events::class);
         $events =  $events->find($id);
         $em->remove($events);
         $em->flush();
         return $this->redirectToRoute('event_list_back');
-
     }
 
     //-----------------------------------PDF:-------------------------------------------
@@ -134,24 +156,24 @@ class EventController extends AbstractController
     public function pdf(EventsRepository $eventsRepository): Response
     {
         // Configuration de dompdf
-        $pdfOptions= new Options();
-        $pdfOptions->set('defaultFont','Arial');
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
 
         // initialisation pdf
-        $dompdf=new Dompdf($pdfOptions);
+        $dompdf = new Dompdf($pdfOptions);
 
         //retreive the events data from the database
         $events = $eventsRepository->findAll();
 
         //render the eventst from the database
-        $html=$this->renderView('front/pdf.html.twig',[
-                     'events' => $events,
-    ]);
-       //load html
+        $html = $this->renderView('front/pdf.html.twig', [
+            'events' => $events,
+        ]);
+        //load html
         $dompdf->loadHtml($html);
 
         //setup the paper format
-        $dompdf->setPaper('A4','Portrait');
+        $dompdf->setPaper('A4', 'Portrait');
 
         //render pdf as html content
         $dompdf->render();
@@ -161,12 +183,11 @@ class EventController extends AbstractController
         $dompdf->stream("listedesevenements.pdf");
 
         //output to browser
-        return new Response('',200,[
+        return new Response('', 200, [
             'Content-Type' => 'applcation/pdf',
         ]);
-
     }
-   //-----------------------------------  Trie par date ordre desc:-------------------------------------------
+    //-----------------------------------  Trie par date ordre desc:-------------------------------------------
 
     #[Route('/events/tridesc', name: 'event_order_by_date_desc')]
     public function orderEventsByDateDesc(EventsRepository $eventsRepository): Response
@@ -200,9 +221,9 @@ class EventController extends AbstractController
     //FRONT Liste event:
 
     #[Route('/frontjson', name: 'event_list_json')]
-    public function ListEventsjson(EventsRepository $repository,SerializerInterface $SerializerInterface ): Response
+    public function ListEventsjson(EventsRepository $repository, SerializerInterface $SerializerInterface): Response
     {
-        $events=$repository->findAll();
+        $events = $repository->findAll();
         $json = $SerializerInterface->serialize($events, 'json', ['groups' => 'event']);
 
         return new JsonResponse($json, 200, [], true);
@@ -219,7 +240,7 @@ class EventController extends AbstractController
         $description = $request->query->get("description");
         $date = $request->query->get("date");
         $location = $request->query->get("location");
-        $image= $request->query->get("image");
+        $image = $request->query->get("image");
 
 
         if ($title !== null) {
@@ -246,18 +267,4 @@ class EventController extends AbstractController
         $formatted = $serializer->normalize($events, null, ['groups' => 'event']);
         return new JsonResponse($formatted);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

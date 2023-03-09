@@ -5,10 +5,12 @@ namespace App\Controller;
 use App\Entity\Reponse;
 use App\Form\ReponseType;
 use App\Repository\ReponseRepository;
+use App\Repository\UserRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 
@@ -16,94 +18,97 @@ use Symfony\Component\Routing\Annotation\Route;
 class ReponseController extends AbstractController
 {
     #[Route('/', name: 'app_reponse_index')]
-  
-            public function index()
-            {
-             return $this->redirectToRoute('app_ajoute');
-         }
-        
-    
 
-   
+    public function index()
+    {
+        return $this->redirectToRoute('app_ajoute');
+    }
 
-         #[Route('/new/{id}', name: 'app_ajoute')]
-         public function new(Request $request, ReponseRepository $reponseRepository,ManagerRegistry $doctrine,$id): Response
-         {
-             $reponse = new Reponse();
-             $form = $this->createForm(ReponseType::class, $reponse);
-             $form->handleRequest($request);
-     
-             if ($form->isSubmitted() && $form->isValid()) {
-                 $reponseRepository->add($reponse, true);
-                 $reponse = new Reponse();
-                 $reponse = $reponseRepository->find($id);
-                 // $reclamation->setEtat(1 );
-                 $em = $doctrine->getManager();
-                 $em->flush();
-                 $reponseRepository->sms();
-                 $this->addFlash('danger', 'reponse envoyée avec succées');
-                 return $this->redirectToRoute('app_affiche1');
-                 
-             }
-     
-             return $this->renderForm('reponse/new.html.twig', [
-                 'reponse' => $reponse,
-                 'form' => $form
-                 //'reponses'=>$reponse
-             ]);
-         }
+
+
+
+
+    #[Route('/new/{id}', name: 'app_ajoute')]
+    public function new(SessionInterface $session, UserRepository $userRepository, Request $request, ReponseRepository $reponseRepository, ManagerRegistry $doctrine, $id): Response
+    {
+        // get logged in user from session
+        $userId = $session->get('user')['idUser'];
+        $user = $userRepository->find($userId);
+
+        $reponse = new Reponse();
+        $form = $this->createForm(ReponseType::class, $reponse);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $reponseRepository->add($reponse, true);
+            $reponse = new Reponse();
+            $reponse = $reponseRepository->find($id);
+            // $reclamation->setEtat(1 );
+            $em = $doctrine->getManager();
+            $em->flush();
+            $reponseRepository->sms();
+            $this->addFlash('danger', 'reponse envoyée avec succées');
+            return $this->redirectToRoute('app_affiche1');
+        }
+
+        return $this->renderForm('reponse/new.html.twig', [
+            'reponse' => $reponse,
+            'form' => $form,
+            'user' => $user
+            //'reponses'=>$reponse
+        ]);
+    }
 
     #[Route('/show', name: 'app_affiche')]
-    public function read2(ReponseRepository $ReponseRepository ):Response
+    public function read2(ReponseRepository $ReponseRepository): Response
     {
-        $reponse=$ReponseRepository->findAll();
-        
-        return $this->render('reponse/index.html.twig',['reponses'=>$reponse]);
+        $reponse = $ReponseRepository->findAll();
+
+        return $this->render('reponse/index.html.twig', ['reponses' => $reponse]);
     }
 
 
 
     #[Route('/showBack', name: 'app_affiche1')]
-    public function afficher(ReponseRepository $ReponseRepository ):Response
+    public function afficher(ReponseRepository $ReponseRepository): Response
     {
-        $reponse=$ReponseRepository->findAll();
-        
-        return $this->render('reponse/index2.html.twig',['reponses'=>$reponse]);
+        $reponse = $ReponseRepository->findAll();
+
+        return $this->render('reponse/index2.html.twig', ['reponses' => $reponse]);
     }
 
 
 
     #[Route('/update2/{id}', name: 'app_modif')]
-    
-    public function update(Request $request,ManagerRegistry $doctrine,Reponse $reponse)
+
+    public function update(Request $request, ManagerRegistry $doctrine, Reponse $reponse)
     {
-     //pour créer un formulaire
-     $form=$this->createForm(ReponseType::class,$reponse);
-     //traiter la requete reçu par le formulaire
-     $form->handleRequest($request);
- if ($form->isSubmitted()&&($form->isValid()))
- {$em=$doctrine->getManager();
-     $em->persist($reponse);
- $em-> flush();
- 
- return $this->redirectToRoute('app_affiche1');
- }
- 
- return $this->render('reponse/edit.html.twig', ['form'=>$form->createView()]);
- 
+        //pour créer un formulaire
+        $form = $this->createForm(ReponseType::class, $reponse);
+        //traiter la requete reçu par le formulaire
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && ($form->isValid())) {
+            $em = $doctrine->getManager();
+            $em->persist($reponse);
+            $em->flush();
+
+            return $this->redirectToRoute('app_affiche1');
+        }
+
+        return $this->render('reponse/edit.html.twig', ['form' => $form->createView()]);
     }
 
     #[Route('/delete/{id}', name: 'app_supprime')]
-    
-    public function remove(ManagerRegistry $doctrine,$id,ReponseRepository $repo):Response
+
+    public function remove(ManagerRegistry $doctrine, $id, ReponseRepository $repo): Response
     {
-$objSupp=$repo->find($id);
-$em=$doctrine->getManager();
-$em->remove($objSupp);
-$em->flush();
-return $this->redirectToRoute('app_affiche1');
+        $objSupp = $repo->find($id);
+        $em = $doctrine->getManager();
+        $em->remove($objSupp);
+        $em->flush();
+        return $this->redirectToRoute('app_affiche1');
     }
-     //SMS
+    //SMS
     /* #[Route('/traiter/{id}', name: 'participer')]
      function Traiter(ReponseRepository $reponseRepository, $id, Request $request, ManagerRegistry $doctrine)
      {
