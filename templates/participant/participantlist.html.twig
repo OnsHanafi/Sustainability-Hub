@@ -1,0 +1,70 @@
+{% extends 'baseBack.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('/backoffice/css/demo_1/participant.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="text-center mb-4">Liste des participants</h1>
+
+        <div class="row mb-3">
+            <div class="col-md-6 offset-md-3">
+                <div class="input-group">
+{#                    <input type="text" class="form-control" id="search-input" placeholder="Rechercher un participant...">#}
+                    <div class="input-group-append">
+{#                        <button class="btn btn-primary" id="search-button" type="button">Rechercher</button>#}
+                    </div>
+
+{#                    <script>#}
+{#                        var searchInput = document.querySelector('#search-input');#}
+{#                        var searchButton = document.querySelector('#search-button');#}
+{#                        var participantsTableBody = document.querySelector('#participants-table-body');#}
+{#                        var searchResultsContainer = document.querySelector('#search-results-container');#}
+
+{#                        searchButton.addEventListener('click', function() {#}
+{#                            var searchText = searchInput.value.toLowerCase();#}
+
+{#                            fetch('/search-participants/' + searchText)#}
+{#                                .then(function(response) {#}
+{#                                    return response.text();#}
+{#                                })#}
+{#                                .then(function(data) {#}
+{#                                    participantsTableBody.style.display = 'none';#}
+{#                                    searchResultsContainer.innerHTML = data;#}
+{#                                })#}
+{#                                .catch(function(error) {#}
+{#                                    console.log(error);#}
+{#                                });#}
+{#                        });#}
+{#                    </script>#}
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Téléphone</th>
+                <th>email</th>
+                <th>Événement</th>
+            </tr>
+            </thead>
+            <tbody id="participants-table-body">
+            {% for participant in participants %}
+                <tr>
+                    <td>{{ participant.name }}</td>
+                    <td>{{ participant.phone_number }}</td>
+                    <td>{{ participant.email }}</td>
+                    <td>{{ participant.title }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div id="search-results-container"></div>
+{% endblock %}
+
+

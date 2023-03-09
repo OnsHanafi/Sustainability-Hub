@@ -1,0 +1,39 @@
+
+{% extends 'baseFront.html.twig' %}
+{% block body %}
+  <h1 class="mb-4">Réponses</h1>
+
+  <table class="table table-striped table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Description</th>
+        <th scope="col">Reclamation</th>
+        <th scope="col">Destination</th>
+        <th scope="col">Titre</th>
+        
+      </tr>
+    </thead>
+    <tbody>
+      {% for reponse in reponses %}
+        <tr>
+          <td>{{ reponse.id }}</td>
+          <td>{{ reponse.contenu }}</td>
+          <td>{{ reponse.nom }}</td>
+          <td>{{ reponse.email }}</td>
+          <td>{{ reponse.prenom }}</td>
+          <td>
+            <a href="{{ path('delete1', {'id': reponse.id}) }}" class="btn btn-danger mr-2">Supprimer</a>
+            <a href="{{ path('update', {'id': reponse.id}) }}" class="btn btn-primary">Modifier</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="{{ path('app_ajoute') }}" class="btn btn-success mt-4">Créer une nouvelle réclamation</a>
+ 
+    
+    
+
+{% endblock %}

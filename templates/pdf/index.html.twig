@@ -1,0 +1,27 @@
+
+                <table  border="1">
+                    <thead >
+                        <tr>
+                            <th>ID</th>
+                            <th>Contenu</th>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Prenom</th>
+                          
+                          
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rec in reclamation %}
+                            <tr>
+                                <td>{{ rec.getId() }}</td>
+                               
+                                <td>{{ rec.getContenu() }}</td>
+                                <td>{{ rec.getNom() }}</td>
+                                <td>{{ rec.getEmail() }}</td>
+                                <td>{{ rec.getPrenom() }}</td>
+                               
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>

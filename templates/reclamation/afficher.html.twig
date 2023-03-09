@@ -1,0 +1,45 @@
+{% extends 'baseFront.html.twig' %}
+{% block body %}
+  <h1 class="mb-4">Reclamations</h1>
+
+  <table class="table table-striped table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Contenu</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Email</th>
+        <th scope="col">Prenom</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for reclamation in rec %}
+        <tr>
+          <td>{{ reclamation.id }}</td>
+          <td>{{ reclamation.contenu }}</td>
+          <td>{{ reclamation.nom }}</td>
+          <td>{{ reclamation.email }}</td>
+          <td>{{ reclamation.prenom }}</td>
+          <td>
+            <a href="{{ path('delete1', {'id': reclamation.id}) }}" class="btn btn-danger mr-2">Supprimer</a>
+            <a href="{{ path('update', {'id': reclamation.id}) }}" class="btn btn-primary">Modifier</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="{{ path('app_reclamation1') }}" class="btn btn-success mt-4">Créer une nouvelle réclamation</a>
+  <li>
+                                    <a class="btn btn-success" href="{{path('pdf') }}">  PDF </a>
+                                    <script type="text/javascript">
+                                        function pdfService(){
+                                            window.print();
+                                        }
+                                    </script>
+                                </li>
+    
+    
+
+{% endblock %}
