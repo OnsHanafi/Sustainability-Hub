@@ -46,18 +46,18 @@ class ReclamationController extends AbstractController
 
 
     #[Route('/readFront', name: 'read_front')]
-    public function readFront(SessionInterface $session, UserRepository $userRepository,ReclamationRepository $ReclamationRepository): Response
+    public function readFront(SessionInterface $session, UserRepository $userRepository, ReclamationRepository $ReclamationRepository): Response
     {
         try {
-             // get logged in user from session
-        $userId = $session->get('user')['idUser'];
-        $user = $userRepository->find($userId);
-        $reclamation = $ReclamationRepository->findAll();
+            // get logged in user from session
+            $userId = $session->get('user')['idUser'];
+            $user = $userRepository->find($userId);
+            $reclamation = $ReclamationRepository->findAll();
         } catch (\Throwable $th) {
             return $this->redirectToRoute('create_user');
         }
 
-        return $this->render('reclamation/index.html.twig', ['rec' => $reclamation, 'user'=>$user]);
+        return $this->render('reclamation/index.html.twig', ['rec' => $reclamation, 'user' => $user]);
     }
 
 
@@ -74,11 +74,11 @@ class ReclamationController extends AbstractController
             $request->query->getInt('page', 1),
             2
         );
-        return $this->render('reclamation/indexBack.html.twig', ['rec' => $reclamation,'user'=>$user]);
+        return $this->render('reclamation/indexBack.html.twig', ['rec' => $reclamation, 'user' => $user]);
     }
 
     #[Route('/create', name: 'app_reclamation1')]
-    public function ajouter(SessionInterface $session, UserRepository $userRepository,Request $request, ReclamationRepository $reclamationRepository): Response
+    public function ajouter(SessionInterface $session, UserRepository $userRepository, Request $request, ReclamationRepository $reclamationRepository): Response
     {
         // get logged in user from session
         $userId = $session->get('user')['idUser'];
@@ -143,7 +143,7 @@ class ReclamationController extends AbstractController
 
 
     #[Route('/update1/{id}', name: 'update')]
-    public function update(SessionInterface $session, UserRepository $userRepository,Request $request, ManagerRegistry $doctrine, Reclamation $reclamation)
+    public function update(SessionInterface $session, UserRepository $userRepository, Request $request, ManagerRegistry $doctrine, Reclamation $reclamation)
     {
         // get logged in user from session
         $userId = $session->get('user')['idUser'];
@@ -161,10 +161,10 @@ class ReclamationController extends AbstractController
             return $this->redirectToRoute('read_front');
         }
 
-        return $this->render('reclamation/edit.html.twig', ['form' => $form->createView(),'user' => $user,]);
+        return $this->render('reclamation/edit.html.twig', ['form' => $form->createView(), 'user' => $user,]);
     }
     ////////////////mobile/////////////////////////////
-   /* #[Route('/reclamation/afficheM', name: 'afficheMo')]
+    /* #[Route('/reclamation/afficheM', name: 'afficheMo')]
     public function show_mobile(ReclamationRepository $ReclamationRepository)
     {
         $reclamation = $ReclamationRepository->findAll();
@@ -174,8 +174,8 @@ class ReclamationController extends AbstractController
         ///////////////////////
        
     }*/
-  
-    
+
+
 
     /*#[Route('/getRec', name: 'app__getRec')]
     public function getRec(ReclamationRepository $userRepository)
@@ -188,23 +188,23 @@ class ReclamationController extends AbstractController
     }*/
 
     #[Route('/getRec', name: 'app__getRec')]
-public function getRec(ReclamationRepository $reclamationRepository)
-{
-    $recs = $reclamationRepository->findAll();
+    public function getRec(ReclamationRepository $reclamationRepository)
+    {
+        $recs = $reclamationRepository->findAll();
 
-    $encoder = new JsonEncoder();
-    $defaultContext = [
-        ObjectNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
-            return $object->getId();
-        },
-    ];
-    $normalizer = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
-    $serializer = new Serializer([$normalizer], [$encoder]);
+        $encoder = new JsonEncoder();
+        $defaultContext = [
+            ObjectNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
+                return $object->getId();
+            },
+        ];
+        $normalizer = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
+        $serializer = new Serializer([$normalizer], [$encoder]);
 
-    $data = $serializer->serialize($recs, 'json');
+        $data = $serializer->serialize($recs, 'json');
 
-    return new JsonResponse($data, 200, [], true);
-}
+        return new JsonResponse($data, 200, [], true);
+    }
 
     #[Route('/reclamation/ajouteM', name: 'ajouteMo')]
     public function add_mobile(Request $request, SerializerInterface $serializer, EntityManagerInterface $em)
@@ -278,7 +278,7 @@ public function getRec(ReclamationRepository $reclamationRepository)
 
 
     //////////////////////pdf//////////////////////////
-    #[Route('/reclamation/pdf', name: 'generator_service')]
+    #[Route('/reclamation/pdf', name: 'reclamation_generator_service')]
     public function pdfService(): Response
     {
         $reclamation = $this->getDoctrine()
@@ -300,7 +300,7 @@ public function getRec(ReclamationRepository $reclamationRepository)
     ////////////////////////////Trie///////////////////////////
     //Email
     #[Route('/reclamation/email', name: 'orderE')]
-    public function order_By_Prix(SessionInterface $session, UserRepository $userRepository,Request $request, ReclamationRepository $reclamationRepository): Response
+    public function order_By_Prix(SessionInterface $session, UserRepository $userRepository, Request $request, ReclamationRepository $reclamationRepository): Response
     {
         // get logged in user from session
         $userId = $session->get('user')['idUser'];
@@ -315,7 +315,7 @@ public function getRec(ReclamationRepository $reclamationRepository)
     }
     //Nom
     #[Route('/reclamation/nom', name: 'orderN')]
-    public function orderByName(SessionInterface $session, UserRepository $userRepository,ReclamationRepository $repository)
+    public function orderByName(SessionInterface $session, UserRepository $userRepository, ReclamationRepository $repository)
     {
         // get logged in user from session
         $userId = $session->get('user')['idUser'];
