@@ -103,7 +103,7 @@ class UserApiController extends AbstractController
         // if user found 
         if ($user) {
             //check User verified
-            if (!($user->isIsVerified())) {
+            if (($user->isIsVerified()) == false) {
                 return new Response("Verify you email");
             } else
                 // check password

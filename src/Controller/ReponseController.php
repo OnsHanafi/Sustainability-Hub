@@ -62,6 +62,7 @@ class ReponseController extends AbstractController
     #[Route('/show', name: 'app_affiche')]
     public function read2(ReponseRepository $ReponseRepository): Response
     {
+
         $reponse = $ReponseRepository->findAll();
 
         return $this->render('reponse/index.html.twig', ['reponses' => $reponse]);
@@ -70,19 +71,30 @@ class ReponseController extends AbstractController
 
 
     #[Route('/showBack', name: 'app_affiche1')]
-    public function afficher(ReponseRepository $ReponseRepository): Response
+    public function afficher(SessionInterface $session, UserRepository $userRepository, ReponseRepository $ReponseRepository): Response
     {
+        // get logged in user from session
+        $userId = $session->get('user')['idUser'];
+        $user = $userRepository->find($userId);
+
         $reponse = $ReponseRepository->findAll();
 
-        return $this->render('reponse/index2.html.twig', ['reponses' => $reponse]);
+        return $this->render('reponse/index2.html.twig', [
+            'reponses' => $reponse,
+            'user' => $user
+        ]);
     }
 
 
 
     #[Route('/update2/{id}', name: 'app_modif')]
 
-    public function update(Request $request, ManagerRegistry $doctrine, Reponse $reponse)
+    public function update(SessionInterface $session, UserRepository $userRepository, Request $request, ManagerRegistry $doctrine, Reponse $reponse)
     {
+        // get logged in user from session
+        $userId = $session->get('user')['idUser'];
+        $user = $userRepository->find($userId);
+
         //pour créer un formulaire
         $form = $this->createForm(ReponseType::class, $reponse);
         //traiter la requete reçu par le formulaire
@@ -95,7 +107,7 @@ class ReponseController extends AbstractController
             return $this->redirectToRoute('app_affiche1');
         }
 
-        return $this->render('reponse/edit.html.twig', ['form' => $form->createView()]);
+        return $this->render('reponse/edit.html.twig', ['user' => $user, 'form' => $form->createView()]);
     }
 
     #[Route('/delete/{id}', name: 'app_supprime')]

@@ -25,61 +25,66 @@ use Symfony\Component\Routing\Annotation\Route;
 class ParticipantController extends AbstractController
 {
     #[Route('/participant/add/{id}', name: 'participant_add')]
-   public function addEvent(SessionInterface $session, UserRepository $userRepository,Request $request,ManagerRegistry $doctrine,EventsRepository $eventsRepository,$id): Response
-//    public function add($id,Request $request, EntityManagerInterface $entityManager,ManagerRegistry $doctrine)
+    public function addEvent(SessionInterface $session, UserRepository $userRepository, Request $request, ManagerRegistry $doctrine, EventsRepository $eventsRepository, $id): Response
+    //    public function add($id,Request $request, EntityManagerInterface $entityManager,ManagerRegistry $doctrine)
 
     {
-        // get logged in user from session
-        $userId = $session->get('user')['idUser'];
-        $user = $userRepository->find($userId);
+        try {
+            // get logged in user from session
+            $userId = $session->get('user')['idUser'];
+            $user = $userRepository->find($userId);
+        } catch (\Throwable $th) {
+            $user = null;
+        }
 
-        $notification=null;
 
-        $event=$eventsRepository->find($id);
-        $participant=new Participant();
-        $form = $this->createForm(ParticipeventType::class,$participant);
+        $notification = null;
+
+        $event = $eventsRepository->find($id);
+        $participant = new Participant();
+        $form = $this->createForm(ParticipeventType::class, $participant);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $participant->setEvents($event);
             $entityManager = $doctrine->getManager();
             $entityManager->persist($participant);
             $entityManager->flush();
 
-            $mail= new mail();
-            $content="Bienvenue a sustainability hub  ".$participant->getName();
-            $mail->send($participant->getEmail(),$participant->getName(),"Merci Pour votre participation  ",$content);
+            $mail = new mail();
+            $content = "Bienvenue a sustainability hub  " . $participant->getName();
+            $mail->send($participant->getEmail(), $participant->getName(), "Merci Pour votre participation  ", $content);
 
 
 
             return $this->redirectToRoute('event_list');
         }
-        return $this->render('participant/new.html.twig',[
-            'form'=> $form->createView(),
-            'event'=> $event,
+        return $this->render('participant/new.html.twig', [
+            'form' => $form->createView(),
+            'event' => $event,
             'user' => $user
         ]);
     }
 
-        #[Route('/participant/list', name: 'participant_list')]
-    public function ListEventsback(SessionInterface $session, UserRepository $userRepository,ParticipantRepository $repository): Response
+    #[Route('/participant/list', name: 'participant_list')]
+    public function ListEventsback(SessionInterface $session, UserRepository $userRepository, ParticipantRepository $repository): Response
     {
         // get logged in user from session
         $userId = $session->get('user')['idUser'];
         $user = $userRepository->find($userId);
 
-//        $participant=$repository->findAll();
+        //        $participant=$repository->findAll();
         $participants = $repository->createQueryBuilder('p')
             ->join('p.Events', 'e')
             ->select('p.name, p.phone_number,p.email,e.title')
             ->getQuery()
             ->getResult();
-        foreach ($participants as $participant){
+        foreach ($participants as $participant) {
             echo $participant['name'] . ', ' . $participant['phone_number'] . ', ' . $participant['email'] . ', ' . $participant['title'] . '<br>';
         }
 
-        return $this->render('participant/participantlist.html.twig',['participants'=>$participants,'user'=>$user]);
+        return $this->render('participant/participantlist.html.twig', ['participants' => $participants, 'user' => $user]);
     }
 
 
@@ -89,24 +94,24 @@ class ParticipantController extends AbstractController
     public function pdfListeParticipant(ParticipantRepository $participantRepository): Response
     {
         // Configuration de dompdf
-        $pdfOptions= new Options();
-        $pdfOptions->set('defaultFont','Arial');
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
 
         // initialisation pdf
-        $dompdf=new Dompdf($pdfOptions);
+        $dompdf = new Dompdf($pdfOptions);
 
         //retreive the events data from the database
         $participant = $participantRepository->findAll();
 
         //render the eventst from the database
-        $html=$this->renderView('participant/pdf.html.twig',[
+        $html = $this->renderView('participant/pdf.html.twig', [
             'Participant' => $participant,
         ]);
         //load html
         $dompdf->loadHtml($html);
 
         //setup the paper format
-        $dompdf->setPaper('A4','Portrait');
+        $dompdf->setPaper('A4', 'Portrait');
 
         //render pdf as html content
         $dompdf->render();
@@ -116,10 +121,9 @@ class ParticipantController extends AbstractController
         $dompdf->stream("listedeparticipant.pdf");
 
         //output to browser
-        return new Response('',200,[
+        return new Response('', 200, [
             'Content-Type' => 'applcation/pdf',
         ]);
-
     }
 
 
@@ -128,15 +132,15 @@ class ParticipantController extends AbstractController
     //-----------------------------------Search:-------------------------------------------
 
 
-//    #[Route('/search-participants/{searchText}', name: 'search-participants')]
-//
-//    public function searchParticipants(ParticipantRepository $repository, string $searchText): Response
-//    {
-//        $participants = $repository->searchParticipants($searchText);
-//
-//        return $this->render('/participant/participantlist.html.twig', [
-//            'participants' => $participants,
-//        ]);
-//    }
+    //    #[Route('/search-participants/{searchText}', name: 'search-participants')]
+    //
+    //    public function searchParticipants(ParticipantRepository $repository, string $searchText): Response
+    //    {
+    //        $participants = $repository->searchParticipants($searchText);
+    //
+    //        return $this->render('/participant/participantlist.html.twig', [
+    //            'participants' => $participants,
+    //        ]);
+    //    }
 
 }

@@ -5,6 +5,7 @@ namespace App\Controller;
 use  App\Form\CategoryType;
 use App\Entity\Category;
 use App\Repository\UserRepository;
+use App\Repository\CategoryRepository;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -16,6 +17,11 @@ use Doctrin\ORM\EntityManagerInterface;
 use CMEN\GoogleChartsBundle\GoogleCharts\Charts\PieChart;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use App\Entity\Service;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+
 
 class CategoryController extends AbstractController
 {
@@ -132,6 +138,19 @@ class CategoryController extends AbstractController
         $jsonContent = $normalizer->normalize($service, 'json', ['groups' => 'post:read']);
         dump($jsonContent);
         return new Response(json_encode($jsonContent));
+       // return new JsonResponse($jsonContent, 200, [], true);
+        
+    }
+
+    
+    #[Route('/getMobile', name: 'app_Category')]
+    public function getAllusers(CategoryRepository $userRepository)
+    {
+        $users = $userRepository->findAll();
+        // serialize the object   
+        $serializer = new Serializer([new ObjectNormalizer()]);
+        $users = $serializer->normalize($users);
+        return new JsonResponse($users);
     }
 
     #[Route('/addCategMobile/{type}/{description}', name: 'addCategMobile')]
@@ -201,11 +220,18 @@ class CategoryController extends AbstractController
 
     #[Route("/apiSortType", name: "apiSortType")]
 
-    public function sortjsonType(NormalizerInterface $Normalizer): Response
+    public function sortjsonType(CategoryRepository $userRepository): Response
     {
-        $categ = $this->getDoctrine()->getRepository(Category::class)->SortByType();
+       /* $categ = $this->getDoctrine()->getRepository(Category::class)->SortByType();
         $jsonContent = $Normalizer->normalize($categ, 'json', ['groups' => 'post:read']);
-        return new Response(json_encode($jsonContent));
+        return new Response(json_encode($jsonContent));*/
+
+        $users = $userRepository->SortByType();
+        // serialize the object   
+        $serializer = new Serializer([new ObjectNormalizer()]);
+        $users = $serializer->normalize($users);
+        return new JsonResponse($users);
+        
     }
     /****************************************************************** */
     #[Route("/apiFindType/{type}", name: "apiFindType")]

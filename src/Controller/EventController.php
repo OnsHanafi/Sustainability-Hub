@@ -190,11 +190,16 @@ class EventController extends AbstractController
     //-----------------------------------  Trie par date ordre desc:-------------------------------------------
 
     #[Route('/events/tridesc', name: 'event_order_by_date_desc')]
-    public function orderEventsByDateDesc(EventsRepository $eventsRepository): Response
+    public function orderEventsByDateDesc(SessionInterface $session, UserRepository $userRepository, EventsRepository $eventsRepository): Response
     {
+        // get logged in user from session
+        $userId = $session->get('user')['idUser'];
+        $user = $userRepository->find($userId);
+
         $events = $eventsRepository->orderEventsByDateDesc();
 
         return $this->render('front/frontlist.html.twig', [
+            'user' => $user,
             'events' => $events,
         ]);
     }
@@ -202,11 +207,15 @@ class EventController extends AbstractController
     //-----------------------------------  Trie par date ordre ASC:-------------------------------------------
 
     #[Route('/events/triasc', name: 'event_order_by_date_asc')]
-    public function orderEventsByDateASC(EventsRepository $eventsRepository): Response
-    {
+    public function orderEventsByDateASC(SessionInterface $session, UserRepository $userRepository, EventsRepository $eventsRepository): Response
+    {   // get logged in user from session
+        $userId = $session->get('user')['idUser'];
+        $user = $userRepository->find($userId);
+
         $eventsasc = $eventsRepository->orderEventsByDateAsc();
 
         return $this->render('front/frontlist.html.twig', [
+            'user' => $user,
             'events' => $eventsasc,
         ]);
     }

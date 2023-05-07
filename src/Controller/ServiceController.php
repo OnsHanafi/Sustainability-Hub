@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+
 use App\Entity\Service;
 use App\Form\ServiceType;
 use App\Repository\ServiceRepository;
@@ -15,7 +16,7 @@ use CMEN\GoogleChartsBundle\GoogleCharts\Charts\PieChart;
 
 use App\Notification\NouveauCompteNotification;
 
-use Knp\Component\Pager\PaginatorInterface; 
+use Knp\Component\Pager\PaginatorInterface;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -37,175 +38,176 @@ class ServiceController extends AbstractController
 
     /********************************************** */
     #[Route('/service/showService', name: 'app_service')]
-    public function index( SessionInterface $session, UserRepository $userRepository, PaginatorInterface $paginator,Request $request): Response
+    public function index(SessionInterface $session, UserRepository $userRepository, PaginatorInterface $paginator, Request $request): Response
     {
         // get logged in user from session
         $userId = $session->get('user')['idUser'];
         $user = $userRepository->find($userId);
 
-        $service= $this->getDoctrine()
-        ->getRepository(Service::class)
-        ->findAll();
+        $service = $this->getDoctrine()
+            ->getRepository(Service::class)
+            ->findAll();
 
-        $service= $paginator->paginate(
+        $service = $paginator->paginate(
             $service,
-            $request->query->getInt('page', 1),6
-            
-            );
+            $request->query->getInt('page', 1),
+            6
 
-     return $this->render('Service/index.html.twig', ['service' => $service , 'user'=>$user]);
+        );
+
+        return $this->render('Service/index.html.twig', ['service' => $service, 'user' => $user]);
     }
 
     #[Route('/service/serviceFront', name: 'app_serviceFront')]
-    public function Front(SessionInterface $session, UserRepository $userRepository,PaginatorInterface $paginator,Request $request): Response
-    {   
+    public function Front(SessionInterface $session, UserRepository $userRepository, PaginatorInterface $paginator, Request $request): Response
+    {
+        try {
+            // get logged in user from session
+            $userId = $session->get('user')['idUser'];
+            $user = $userRepository->find($userId);
+        } catch (\Throwable $th) {
+            $user = null;
+        }
 
-        // get logged in user from session
-        $userId = $session->get('user')['idUser'];
-        $user = $userRepository->find($userId);
 
-        $service= $this->getDoctrine()
-        ->getRepository(Service::class)
-        ->findAll();
-        $service= $paginator->paginate(
+        $service = $this->getDoctrine()
+            ->getRepository(Service::class)
+            ->findAll();
+        $service = $paginator->paginate(
             $service,
-            $request->query->getInt('page', 1),6
-            
-            );
-      return $this->render('Service/ServiceFront.html.twig', ['service' => $service,'user'=>$user]);
+            $request->query->getInt('page', 1),
+            6
+
+        );
+        return $this->render('Service/ServiceFront.html.twig', ['service' => $service, 'user' => $user]);
     }
     #[Route('/service/serviceCreate', name: 'create_service')]
-    public function addService(SessionInterface $session, UserRepository $userRepository,Request $request ): Response
+    public function addService(SessionInterface $session, UserRepository $userRepository, Request $request): Response
     {
         // get logged in user from session
         $userId = $session->get('user')['idUser'];
         $user = $userRepository->find($userId);
 
-        $service= new service();
-        $form = $this->createForm(ServiceType::class,$service);
+        $service = new service();
+        $form = $this->createForm(ServiceType::class, $service);
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid())
-        {//$file = $service->getImage();
+        if ($form->isSubmitted() && $form->isValid()) { //$file = $service->getImage();
             $file = $form->get('image')->getData();
-            $filename = md5(uniqid()).'.'.$file->guessExtension();
-            $file->move($this->getParameter('uploads'),$filename);
+            $filename = md5(uniqid()) . '.' . $file->guessExtension();
+            $file->move($this->getParameter('uploads'), $filename);
             $service->setImage($filename);
-          
-        
-            $em=$this->getDoctrine()->getManager();
+
+
+            $em = $this->getDoctrine()->getManager();
             $em->persist($service);
             $em->flush();
 
             return $this->redirectToRoute('app_service');
-
         }
 
-        return $this->render('Service/ajouter.html.twig',['form'=>$form->createView(),'user'=>$user]);
+        return $this->render('Service/ajouter.html.twig', ['form' => $form->createView(), 'user' => $user]);
     }
     #[Route('/serviceDelete/{id}', name: 'delete_service')]
 
-public function Supprimer($id){
-    $entityManager = $this->getDoctrine()->getManager();
-        $service= $entityManager->getRepository(Service::class)->find($id);
+    public function Supprimer($id)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $service = $entityManager->getRepository(Service::class)->find($id);
 
         if (!$service) {
             throw $this->createNotFoundException(
-                'No category found for id '.$id
+                'No category found for id ' . $id
             );
         }
 
         $entityManager->remove($service);
-         $entityManager->flush();
-    return $this->redirectToRoute('app_service');
-}
-
-
-#[Route('/serviceUpdate/{id}', name: 'update_service')]
-public function update(SessionInterface $session, UserRepository $userRepository,Request $request,$id): Response
-{
-    // get logged in user from session
-    $userId = $session->get('user')['idUser'];
-    $user = $userRepository->find($userId);
-
-
-    $entityManager = $this->getDoctrine()->getManager();
-   
-
-    $service= $entityManager->getRepository(Service::class)->find($id);
-
-    $form=$this->createForm(ServiceType::class,$service);
-
-    $form->handleRequest($request);
-    if($form->isSubmitted() && $form->isValid())
-    {//$file = $service->getImage();
-        $file = $form->get('image')->getData();
-        $filename = md5(uniqid()).'.'.$file->guessExtension();
-        $file->move($this->getParameter('uploads'),$filename);
-        $service->setImage($filename);
-   
-   
-    $entityManager->persist($service);
-
-    
-    $entityManager->flush();
-    return $this->redirectToRoute('app_service');
+        $entityManager->flush();
+        return $this->redirectToRoute('app_service');
     }
 
-   else{
-    return $this->render("service/ajouter.html.twig", 
-    [
-          'form' => $form->createView(),
-          'user' => $user,
-          ]
- );
-   }
 
-}
-#[Route('/serviceRech/{id}', name: 'rech_service')]
-public function recherche(Request $request,$id): Response
-{
-    $entityManager = $this->getDoctrine()->getManager();
-   
+    #[Route('/serviceUpdate/{id}', name: 'update_service')]
+    public function update(SessionInterface $session, UserRepository $userRepository, Request $request, $id): Response
+    {
+        // get logged in user from session
+        $userId = $session->get('user')['idUser'];
+        $user = $userRepository->find($userId);
 
-    $service= $entityManager->getRepository(Service::class)->find($id);
-    return $this->render('Service/ServiceRech.html.twig', ['service' => $service]);
-}
-/***************************************PDF****************************************** */
 
-#[Route('/pdf/service', name: 'generator_service')]
+        $entityManager = $this->getDoctrine()->getManager();
+
+
+        $service = $entityManager->getRepository(Service::class)->find($id);
+
+        $form = $this->createForm(ServiceType::class, $service);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) { //$file = $service->getImage();
+            $file = $form->get('image')->getData();
+            $filename = md5(uniqid()) . '.' . $file->guessExtension();
+            $file->move($this->getParameter('uploads'), $filename);
+            $service->setImage($filename);
+
+
+            $entityManager->persist($service);
+
+
+            $entityManager->flush();
+            return $this->redirectToRoute('app_service');
+        } else {
+            return $this->render(
+                "service/ajouter.html.twig",
+                [
+                    'form' => $form->createView(),
+                    'user' => $user,
+                ]
+            );
+        }
+    }
+    #[Route('/serviceRech/{id}', name: 'rech_service')]
+    public function recherche(Request $request, $id): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+
+
+        $service = $entityManager->getRepository(Service::class)->find($id);
+        return $this->render('Service/ServiceRech.html.twig', ['service' => $service]);
+    }
+    /***************************************PDF****************************************** */
+
+    #[Route('/pdf/service', name: 'generator_service')]
     public function pdfService(): Response
-    { 
-        $service= $this->getDoctrine()
-        ->getRepository(Service::class)
-        ->findAll();
+    {
+        $service = $this->getDoctrine()
+            ->getRepository(Service::class)
+            ->findAll();
 
-   
 
-        $html =$this->renderView('pdfService/index.html.twig', ['service' => $service]);
-        $pdfGeneratorService=new PdfGeneratorService();
+
+        $html = $this->renderView('pdfService/index.html.twig', ['service' => $service]);
+        $pdfGeneratorService = new PdfGeneratorService();
         $pdf = $pdfGeneratorService->generatePdf($html);
 
         return new Response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'inline; filename="document.pdf"',
         ]);
-       
     }
 
 
     /*************************Statistique********************************** */
     #[Route('/service/statistique', name: 'stats')]
-public function stat(SessionInterface $session, UserRepository $userRepository)
+    public function stat(SessionInterface $session, UserRepository $userRepository)
     {
         // get logged in user from session
         $userId = $session->get('user')['idUser'];
-        if($userId){
+        if ($userId) {
             $user = $userRepository->find($userId);
         }
-        
+
 
         $repository = $this->getDoctrine()->getRepository(Service::class);
-        $service= $repository->findAll();
+        $service = $repository->findAll();
 
         $em = $this->getDoctrine()->getManager();
 
@@ -215,20 +217,20 @@ public function stat(SessionInterface $session, UserRepository $userRepository)
 
 
         foreach ($service as $service) {
-            if ($service->getCategory() == "sondes")  :
+            if ($service->getCategory() == "sondes") :
 
                 $pr1 += 1;
-            else:
+            else :
 
                 $pr2 += 1;
 
             endif;
-
         }
 
         $pieChart = new PieChart();
         $pieChart->getData()->setArrayToDataTable(
-            [['Category', 'nom'],
+            [
+                ['Category', 'nom'],
                 ['service de type sondes', $pr1],
                 ['service ne sont pas de type sondes', $pr2],
             ]
@@ -242,45 +244,44 @@ public function stat(SessionInterface $session, UserRepository $userRepository)
         $pieChart->getOptions()->getTitleTextStyle()->setFontName('Arial');
         $pieChart->getOptions()->getTitleTextStyle()->setFontSize(30);
 
-       
 
-        return $this->render('service/stat.html.twig', ['piechart' => $pieChart,'user'=>$user]);
+
+        return $this->render('service/stat.html.twig', ['piechart' => $pieChart, 'user' => $user]);
     }
 
-/******************Map**************************** */
-    
+    /******************Map**************************** */
 
-     #[Route('/mapM',name:'mapM')]
-     
+
+    #[Route('/mapM', name: 'mapM')]
+
     public function Map()
     {
 
         return $this->render('service/map.html.twig');
     }
-    
-/***************************Like &Dsilike******************************************** */
+
+    /***************************Like &Dsilike******************************************** */
 
 
-#[Route('/dislike/{id}', name: 'dislike_service')]
-public function dislike(Request $request, Service $service)
-{
-    $service->setDislike($service->getDislike() + 1);
-    $this->getDoctrine()->getManager()->flush();
- 
-    return $this->redirectToRoute('app_serviceFront');
-}
+    #[Route('/dislike/{id}', name: 'dislike_service')]
+    public function dislike(Request $request, Service $service)
+    {
+        $service->setDislike($service->getDislike() + 1);
+        $this->getDoctrine()->getManager()->flush();
 
-#[Route('/like/{id}', name: 'like_service')]
-public function like(Request $request, Service $service)
-{
-    $service->setLikes($service->getLikes() + 1);
-    $this->getDoctrine()->getManager()->flush();
+        return $this->redirectToRoute('app_serviceFront');
+    }
 
-    return $this->redirectToRoute('app_serviceFront');
+    #[Route('/like/{id}', name: 'like_service')]
+    public function like(Request $request, Service $service)
+    {
+        $service->setLikes($service->getLikes() + 1);
+        $this->getDoctrine()->getManager()->flush();
 
-}
-/*****************************************************************************Recherche */
-/*#[Route("/search", name: "searchService")]
+        return $this->redirectToRoute('app_serviceFront');
+    }
+    /*****************************************************************************Recherche */
+    /*#[Route("/search", name: "searchService")]
     public function searchService(Request $request, serviceRepository $serviceRepository)
     {
         try {
@@ -321,12 +322,12 @@ public function like(Request $request, Service $service)
 
 
 /*********************************************************************** */
-//Email
-#[Route('/service/orderTitre', name: 'orderTitre')]
-    public function order_By_Titre(Request $request,ServiceRepository $serviceRepository): Response
+    //Email
+    #[Route('/service/orderTitre', name: 'orderTitre')]
+    public function order_By_Titre(Request $request, ServiceRepository $serviceRepository): Response
     {
-//list of students order By Dest
-        $serviceByTitre= $serviceRepository->order_By_titre();
+        //list of students order By Dest
+        $serviceByTitre = $serviceRepository->order_By_titre();
 
         return $this->render('service/serviceFront.html.twig', [
             'service' =>  $serviceByTitre,
@@ -337,7 +338,7 @@ public function like(Request $request, Service $service)
     public function orderByLocalisation(ServiceRepository $repository)
     {
         $service = $repository->orderByLocalisation();
-    
+
         return $this->render('service/serviceFront.html.twig', [
             'service' => $service,
         ]);

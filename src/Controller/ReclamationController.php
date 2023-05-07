@@ -28,6 +28,12 @@ use Doctrine\ORM\EntityManager;
 use Normalizer;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+//use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+//use Symfony\Component\Serializer\Serializer;
+//use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+//use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 class ReclamationController extends AbstractController
 {
@@ -158,18 +164,47 @@ class ReclamationController extends AbstractController
         return $this->render('reclamation/edit.html.twig', ['form' => $form->createView(),'user' => $user,]);
     }
     ////////////////mobile/////////////////////////////
-    #[Route('/reclamation/afficheM', name: 'afficheMo')]
-    public function show_mobile(ReclamationRepository $ReclamationRepository, SerializerInterface $serializerInterface)
+   /* #[Route('/reclamation/afficheM', name: 'afficheMo')]
+    public function show_mobile(ReclamationRepository $ReclamationRepository)
     {
         $reclamation = $ReclamationRepository->findAll();
         $json = $serializerInterface->serialize($reclamation, 'json', ['groups' => 'reclamation']);
 
         return new JsonResponse($json, 200, [], true);
-    }
-    // $serializer = new Serializer([new ObjectNormalizer()]);
-    //$formatted=$serializer->normalize($reclamation);
-    //return new JsonResponse($formatted);
+        ///////////////////////
+       
+    }*/
+  
+    
 
+    /*#[Route('/getRec', name: 'app__getRec')]
+    public function getRec(ReclamationRepository $userRepository)
+    {
+        $users = $userRepository->findAll();
+        // serialize the object   
+        $serializer = new Serializer([new ObjectNormalizer()]);
+        $users = $serializer->normalize($users);
+        return new JsonResponse($users);
+    }*/
+
+    #[Route('/getRec', name: 'app__getRec')]
+public function getRec(ReclamationRepository $reclamationRepository)
+{
+    $recs = $reclamationRepository->findAll();
+
+    $encoder = new JsonEncoder();
+    $defaultContext = [
+        ObjectNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
+            return $object->getId();
+        },
+    ];
+    $normalizer = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
+    $serializer = new Serializer([$normalizer], [$encoder]);
+
+    $data = $serializer->serialize($recs, 'json');
+
+    return new JsonResponse($data, 200, [], true);
+}
 
     #[Route('/reclamation/ajouteM', name: 'ajouteMo')]
     public function add_mobile(Request $request, SerializerInterface $serializer, EntityManagerInterface $em)
